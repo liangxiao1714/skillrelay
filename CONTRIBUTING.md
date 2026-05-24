@@ -1,3 +1,7 @@
+**[English](./CONTRIBUTING.md) | [中文](./CONTRIBUTING.zh-CN.md)**
+
+---
+
 # Contributing to SkillRelay
 
 Thank you for your interest in contributing to SkillRelay!

@@ -1,3 +1,7 @@
+**[English](./README.md) | [中文](./README.zh-CN.md)**
+
+---
+
 # SkillRelay
 
 > The relay station for your agent skills.
