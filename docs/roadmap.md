@@ -31,8 +31,9 @@ Goal: a working CLI that can manage a local registry.
 - [ ] `skillrelay list` — list skills in the local registry
 - [ ] `skillrelay install <source>` — import a skill from a local path or URL
 - [ ] `skillrelay info <skill>` — show skill details
+- [ ] `skillrelay status <skill>` — show where a skill lives and its sync state across registry and agents
 - [ ] `skillrelay remove <skill>` — remove a skill from the registry
-- [ ] `skillrelay source add/remove/list` — manage skill sources
+- [ ] `skillrelay source add/remove/list/enable/disable` — manage skill sources
 - [ ] `skillrelay config` — manage configuration
 
 ## Phase 2 — Agent Adapters
@@ -62,14 +63,15 @@ Goal: cross-agent skill compatibility.
 - [ ] Format conversion between agent-specific formats
 - [ ] `skillrelay validate <skill>` — validate skill completeness and compatibility
 - [ ] Dependency checking
-- [ ] Trust and safety checks
+- [ ] Trust and safety checks — source credibility, risk flags, and dangerous dependency detection (distinct from format validation)
 
 ## Phase 5 — Publish & Ecosystem
 
 Goal: bidirectional skill flow and open ecosystem.
 
-- [ ] `skillrelay publish <skill>` — publish a skill to an external source
-- [ ] Version tracking and conflict resolution
+- [ ] `skillrelay publish <skill>` — prepare a skill artifact or publish directly to a configured external source (where supported)
+- [ ] Version tracking and history
+- [ ] Conflict resolution — same-name, multi-version, and multi-source conflicts
 - [ ] Community adapter contributions
 - [ ] Community source integrations
 

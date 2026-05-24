@@ -22,6 +22,8 @@ SkillRelay 通过以下方式解决这一碎片化问题：
 
 目标不是让每个 Agent 加载所有技能，而是给你一个统一管理所有技能的地方，并以一致的方式将技能送达目标 Agent。
 
+SkillRelay 是一个本地工具 —— 它运行在你的机器上并维护本地仓库。它不是共享的全局运行时，也不是云端托管服务。
+
 ## 核心概念
 
 | 概念 | 说明 |
@@ -68,15 +70,18 @@ SkillRelay 通过以下方式解决这一碎片化问题：
 主命令为 `skillrelay`（计划短别名：`sr`、`relay`）。
 
 ```
-skillrelay search <query>         # 搜索仓库和来源中的技能
-skillrelay install <source>       # 从来源导入技能到本地仓库
-skillrelay push <agent> <skill>   # 将技能推送到指定 Agent
-skillrelay pull <agent> <skill>   # 从指定 Agent 拉取技能
-skillrelay sync <agent>           # 与指定 Agent 同步仓库
-skillrelay publish <skill>        # 将技能发布到外部来源
-skillrelay source add <url>       # 添加技能来源
-skillrelay list                   # 列出仓库中的技能
-skillrelay info <skill>           # 查看技能详情
+skillrelay search <query>               # 搜索仓库和来源中的技能
+skillrelay install <source>             # 从来源导入技能到本地仓库
+skillrelay push <agent> <skill>         # 将技能推送到指定 Agent
+skillrelay pull <agent> <skill>         # 从指定 Agent 拉取技能
+skillrelay sync <agent>                 # 与指定 Agent 同步仓库
+skillrelay publish <skill>              # 准备技能制品或发布到已配置的外部来源
+skillrelay status <skill>               # 查看技能所在位置及其同步状态
+skillrelay source add <url>             # 添加技能来源
+skillrelay source list                  # 列出已配置的来源
+skillrelay source enable/disable <name> # 启用或停用某个来源
+skillrelay list                         # 列出仓库中的技能
+skillrelay info <skill>                 # 查看技能详情
 ```
 
 > 注意：以上命令为计划内容，可能在设计阶段调整。

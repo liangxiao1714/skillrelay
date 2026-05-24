@@ -31,8 +31,9 @@
 - [ ] `skillrelay list` —— 列出本地仓库中的技能
 - [ ] `skillrelay install <source>` —— 从本地路径或 URL 导入技能
 - [ ] `skillrelay info <skill>` —— 查看技能详情
+- [ ] `skillrelay status <skill>` —— 查看技能在仓库和各 Agent 中的位置与同步状态
 - [ ] `skillrelay remove <skill>` —— 从仓库中移除技能
-- [ ] `skillrelay source add/remove/list` —— 管理技能来源
+- [ ] `skillrelay source add/remove/list/enable/disable` —— 管理技能来源
 - [ ] `skillrelay config` —— 管理配置项
 
 ## Phase 2 —— Agent 适配器
@@ -62,7 +63,7 @@
 - [ ] Agent 专属格式之间的相互转换
 - [ ] `skillrelay validate <skill>` —— 校验技能完整性和兼容性
 - [ ] 依赖关系检查
-- [ ] 可信度与安全检查
+- [ ] 可信度与安全检查 —— 来源可信度、风险标记和危险依赖检测（独立于格式校验）
 
 ## Phase 5 —— 发布与生态
 

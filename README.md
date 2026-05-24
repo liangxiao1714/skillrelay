@@ -19,8 +19,11 @@ SkillRelay solves that fragmentation by providing:
 - a **local canonical registry** as the central hub for all your agent skills
 - an **adapter system** that translates skills into each agent's native format
 - a **full lifecycle flow**: discover → import → adapt → sync → publish
+- a **bidirectional lifecycle** where agent-originated skills can flow back into the local registry and then be republished to external sources
 
 The goal is not to force every agent to load every skill. It is to give you one place to manage all your skills, and a consistent way to get them where they need to go.
+
+SkillRelay is a local tool — it runs on your machine and maintains a local registry. It is not a shared global runtime or cloud-hosted service.
 
 ## Core Concepts
 
@@ -40,7 +43,8 @@ The goal is not to force every agent to load every skill. It is to give you one 
 - pull / push / sync between registry and agents
 - skill format conversion
 - validation and health checks
-- version tracking and conflict handling
+- skill state tracking — where each skill lives, whether it is synced, and whether it is currently available
+- version tracking and conflict handling (same-name, multi-version, and multi-source)
 - trust and safety checks
 - skill publishing back to sources
 - extensible source and adapter system
@@ -61,22 +65,25 @@ A typical SkillRelay flow:
 2. **Import** it into the local registry
 3. **Adapt** it for a specific agent's format
 4. **Sync** it to that agent
-5. Optionally **publish** it back to an external source
+5. Optionally **publish** it back to an external source — either as a portable artifact or directly to a configured source when supported
 
 ## CLI
 
 The primary interface is the `skillrelay` command (short aliases: `sr`, `relay` — planned).
 
 ```
-skillrelay search <query>         # search registry and sources
-skillrelay install <source>       # import a skill into the registry
-skillrelay push <agent> <skill>   # push a skill to an agent
-skillrelay pull <agent> <skill>   # pull a skill from an agent
-skillrelay sync <agent>           # sync registry with an agent
-skillrelay publish <skill>        # publish a skill to an external source
-skillrelay source add <url>       # add a skill source
-skillrelay list                   # list skills in the registry
-skillrelay info <skill>           # show skill details
+skillrelay search <query>               # search registry and sources
+skillrelay install <source>             # import a skill into the registry
+skillrelay push <agent> <skill>         # push a skill to an agent
+skillrelay pull <agent> <skill>         # pull a skill from an agent
+skillrelay sync <agent>                 # sync registry with an agent
+skillrelay publish <skill>              # prepare or publish a skill to a configured external source
+skillrelay status <skill>               # show where a skill lives and its sync state
+skillrelay source add <url>             # add a skill source
+skillrelay source list                  # list configured sources
+skillrelay source enable/disable <name> # enable or disable a source
+skillrelay list                         # list skills in the registry
+skillrelay info <skill>                 # show skill details
 ```
 
 > Note: CLI commands are planned and subject to change during design.

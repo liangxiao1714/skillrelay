@@ -16,12 +16,13 @@ The local central repository stored on the user's machine. It holds:
 - skill metadata (name, version, tags, origin, compatibility)
 - source records (where skills came from)
 - sync state per agent
+- conflict flags (same-name skills from multiple sources or versions)
 
-The registry is the single source of truth for all managed skills.
+The registry is the single source of truth for all managed skills. It tracks the status of each skill: where it lives (registry only, or synced to specific agents), whether it is up-to-date, whether there are conflicts, and its availability across sources.
 
 ### Source
 
-Where skills originate. Supported source types (planned):
+Where skills originate. Sources are managed objects — they can be added, removed, enabled, disabled, and queried for health and credibility status. Supported source types (planned):
 
 - **SkillHub** — a dedicated online skill platform
 - **GitHub repositories** — repos containing skills or skill packs
@@ -76,6 +77,8 @@ Skills flow **bidirectionally**:
 3. **Adapter isolation** — agents interact with the registry only through their adapter.
 4. **Bidirectional flow** — the registry can both consume and produce skills.
 5. **Extensibility** — new adapters and source types can be added without changing core.
+6. **Conflict-aware** — same-name, multi-version, and multi-source conflicts are first-class concerns, not edge cases.
+7. **Trust and safety as product concerns** — source credibility, risk detection, and trust flags are part of the skill lifecycle, not optional add-ons.
 
 ## CLI Architecture
 
@@ -83,16 +86,18 @@ The primary interface is a CLI tool with the command `skillrelay`. Functional ar
 
 | Area | Commands (planned) |
 |---|---|
-| Source management | `source add`, `source remove`, `source list` |
+| Source management | `source add`, `source remove`, `source list`, `source enable`, `source disable`, `source status` |
 | Search & discovery | `search`, `list` |
 | Import | `install`, `import` |
 | Export / distribute | `export`, `push` |
 | Sync | `sync`, `pull` |
 | Conversion | `convert` |
-| Validation | `check`, `validate` |
+| Validation & safety | `check`, `validate` |
 | Status | `status`, `info` |
 | Config | `config` |
 | Publish | `publish` |
+
+> `publish` may operate in two modes: preparing a skill as a distributable artifact, or pushing directly to a configured external source when the source supports it.
 
 ## Open Questions
 

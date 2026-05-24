@@ -76,6 +76,7 @@ The primary interface is a CLI tool. Key functional areas to implement:
 
 ## Development Notes
 
-- No build system, test framework, or language has been chosen yet. Refer to `skillrelay-project-discussion.md` for the full design rationale before making architectural decisions.
+- No build system, test framework, or language has been chosen yet. Read `docs/implementation-contract.md` first and treat it as the authoritative project contract before making architectural decisions.
+- Before implementation, also read `docs/v0.1-scope.md`, `docs/canonical-skill-format.md`, and `docs/adapter-contract.md`.
 - When implementing, start by settling on: data structures for Skill and Registry, the canonical skill format, and the adapter interface contract — everything else depends on these.
 - If you encounter any leftover reference to "SkillMesh" or `skills_mesh` anywhere in the repo, **rename it to SkillRelay / skillrelay** — the old codename is fully deprecated.
