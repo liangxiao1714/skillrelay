@@ -1,0 +1,66 @@
+# Claude Code local settings
+.claude/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Build outputs (for when implementation begins)
+dist/
+build/
+out/
+bin/
+
+# Language-specific (placeholder for when language is decided)
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Go
+*.exe
+*.test
+
+# Rust
+target/
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+*.pid
+*.seed
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS-generated
+.Spotlight-V100
+.Trashes
