@@ -64,10 +64,10 @@ See [decisions/README.md](./decisions/README.md).
 |---|---|---|
 | [development/document-conventions.md](./development/document-conventions.md) | How docs are written | accepted |
 | [development/definition-of-done.md](./development/definition-of-done.md) | What "done" means | accepted |
-| [development/coding-standards.md](./development/coding-standards.md) | Code style, naming, structure | planned |
-| [development/project-structure.md](./development/project-structure.md) | `src/` layout | planned |
+| [development/coding-standards.md](./development/coding-standards.md) | Code style, naming, structure | accepted |
+| [development/project-structure.md](./development/project-structure.md) | `src/` layout | accepted |
 | [development/workflow.md](./development/workflow.md) | Branch, commit, PR workflow | planned |
-| [development/test-strategy.md](./development/test-strategy.md) | Test pyramid, fixtures, coverage | planned |
+| [development/test-strategy.md](./development/test-strategy.md) | Test pyramid, fixtures, coverage | accepted |
 | [development/release-process.md](./development/release-process.md) | Versioning and release | planned |
 | [development/security-and-trust.md](./development/security-and-trust.md) | Trust boundary and adapter safety | planned |
 | [development/compatibility-matrix.md](./development/compatibility-matrix.md) | Supported Node versions and OSes | planned |
