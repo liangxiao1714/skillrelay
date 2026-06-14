@@ -9,7 +9,11 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src/**/*.ts"],
-      exclude: ["src/cli/index.ts"],
+      exclude: [
+        // CLI commands run as separate child processes in E2E tests;
+        // their coverage cannot be tracked by vitest instrumentation.
+        "src/cli/**",
+      ],
       thresholds: {
         lines: 80,
         functions: 80,

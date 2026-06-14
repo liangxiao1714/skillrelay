@@ -64,3 +64,4 @@ logs/
 # OS-generated
 .Spotlight-V100
 .Trashes
+coverage/
