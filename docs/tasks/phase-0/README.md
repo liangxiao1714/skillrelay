@@ -8,13 +8,24 @@
 | ID | Title | Status | Depends on |
 |---|---|---|---|
 | [T-0001](./T-0001-scaffold-typescript-project.md) | Scaffold TypeScript project | done | none |
-| [T-0002](./T-0002-canonical-skill-schema.md) | Canonical skill schema (zod) | todo | T-0001 |
-| [T-0003](./T-0003-registry-init-read-write.md) | Registry init / read / write | todo | T-0002 |
-| [T-0004](./T-0004-import-local-file-dir.md) | Import from local file/dir | todo | T-0003 |
-| [T-0005](./T-0005-cli-list-info-status.md) | CLI: list / info / status | todo | T-0004 |
-| [T-0006](./T-0006-validate-command.md) | Validate command | todo | T-0002, T-0004 |
-| [T-0007](./T-0007-hermes-adapter-skeleton.md) | Hermes adapter skeleton (detect, discover) | todo | T-0001 |
-| [T-0008](./T-0008-hermes-adapter-export-push.md) | Hermes adapter: export / push | todo | T-0003, T-0007 |
+| [T-0002](./T-0002-canonical-skill-schema.md) | Canonical skill schema (zod) | done | T-0001 |
+| [T-0003](./T-0003-registry-init-read-write.md) | Registry init / read / write | done | T-0002 |
+| [T-0004](./T-0004-import-local-file-dir.md) | Import from local file/dir | done | T-0003 |
+| [T-0005](./T-0005-cli-list-info-status.md) | CLI: list / info / status / import | done | T-0004 |
+| [T-0006](./T-0006-validate-command.md) | Validate command | done | T-0002, T-0004 |
+| [T-0007](./T-0007-hermes-adapter-skeleton.md) | Hermes adapter skeleton (detect, discover) | done | T-0001 |
+| [T-0008](./T-0008-hermes-adapter-export-push.md) | Hermes adapter: export / push | done | T-0003, T-0007 |
+
+## Summary
+
+All Phase 0 tasks are complete. The project has:
+- Full TypeScript scaffold (strict mode, ESM, pnpm, tsup, vitest, Biome)
+- Canonical skill schema (zod, branded types, all field types)
+- Registry init/read/write (filesystem-only, atomic writes, conflict detection)
+- Import pipeline (local file/dir, gray-matter front-matter parsing, canonical record building)
+- CLI commands: init, list, info, import, status, validate, export
+- Hermes adapter: detect, discover, import, export, status, validate
+- 87 tests passing: 63 unit + 12 integration + 12 E2E
 
 ## References
 
