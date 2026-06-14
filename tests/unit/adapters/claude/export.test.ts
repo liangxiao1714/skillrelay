@@ -1,7 +1,6 @@
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { exportClaudeSkill, buildClaudeCommandMd, defaultClaudeTargetPath } from "../../../../src/adapters/claude/export.js";
+import { buildClaudeCommandMd, exportClaudeSkill } from "../../../../src/adapters/claude/export.js";
 import { generateSkillId } from "../../../../src/core/id/generate.js";
 import type { Skill } from "../../../../src/core/schema/index.js";
 import { makeTmpDir } from "../../../../src/util/fs.js";
@@ -35,7 +34,7 @@ describe("buildClaudeCommandMd", () => {
     const md = buildClaudeCommandMd(skill, "# Content\n\nBody.");
     expect(md.startsWith("---")).toBe(true);
     expect(md).toContain("name: test-skill");
-    expect(md).toContain(`description: Summary of test-skill`);
+    expect(md).toContain("description: Summary of test-skill");
     expect(md).toContain("skillrelay_id:");
     expect(md).toContain("# Content");
   });
