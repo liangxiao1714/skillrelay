@@ -49,6 +49,8 @@ async function registerCommands(): Promise<void> {
     { default: updateCmd },
     { default: trustCmd },
     { default: syncCmd },
+    { default: tagCmd },
+    { default: convertCmd },
   ] = await Promise.all([
     import("./commands/init.js"),
     import("./commands/list.js"),
@@ -65,6 +67,8 @@ async function registerCommands(): Promise<void> {
     import("./commands/update.js"),
     import("./commands/trust.js"),
     import("./commands/sync.js"),
+    import("./commands/tag.js"),
+    import("./commands/convert.js"),
   ]);
 
   program.addCommand(initCmd());
@@ -82,6 +86,8 @@ async function registerCommands(): Promise<void> {
   program.addCommand(updateCmd());
   program.addCommand(trustCmd());
   program.addCommand(syncCmd());
+  program.addCommand(tagCmd());
+  program.addCommand(convertCmd());
 }
 
 await registerCommands();

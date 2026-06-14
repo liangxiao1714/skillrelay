@@ -82,3 +82,20 @@ All commands support: `--registry <path>`, `--json`, `--no-color`, `--quiet`, `-
 
 [Unreleased]: https://github.com/skillrelay/skillrelay/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/skillrelay/skillrelay/releases/tag/v0.1.0
+
+---
+
+## [Unreleased] — Phase 4 & 5 additions (2026-06-14)
+
+### Added
+
+- **`skillrelay trust <skill-id> <level>`** — Set the trust level for a skill (`trusted`, `community`, `untrusted`, `unknown`). Persists to `skill.safety.trust_level`. Supports `--json`.
+- **`skillrelay sync <agent>`** — Batch export all active registry skills to an agent (`hermes` or `claude`). Supports `--dry-run`, `--overwrite`, `--json`. Updates `skill.yaml` adapter state per skill after export.
+- **`skillrelay tag <skill-id>`** — List, add, remove, or replace skill tags without re-importing. Flags: `--add <tag>`, `--remove <tag>`, `--set <tags...>`, `--json`.
+- **`skillrelay convert <input> [output]`** — Convert a skill between Hermes and Claude native formats directly, without the registry. Required: `--from <format>`, `--to <format>`. Supports `--dry-run`, `--json`.
+- 14 new E2E tests (7 trust + 5 sync + 8 tag + 6 convert).
+
+### Test counts
+
+- **321 tests**: 161 unit + 15 integration + 66 E2E
+- Coverage: ≥ 93%

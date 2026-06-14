@@ -355,3 +355,35 @@ skillrelay sync hermes --dry-run        # 预览，不实际写入
 skillrelay sync hermes --overwrite      # 覆盖已存在的文件
 skillrelay sync claude --json           # JSON 输出，包含每个技能的结果
 ```
+
+---
+
+### `skillrelay tag <skill-id>`
+
+在不重新导入的情况下，列出、添加、删除或替换技能标签。
+
+```bash
+skillrelay tag my-skill                          # 列出当前标签
+skillrelay tag my-skill --add typescript         # 添加标签
+skillrelay tag my-skill --remove testing         # 删除标签
+skillrelay tag my-skill --set alpha beta gamma   # 替换所有标签
+skillrelay tag my-skill --json                   # JSON 输出
+```
+
+---
+
+### `skillrelay convert <input> [output]`
+
+在不经过仓库的情况下，直接在 Agent 原生格式之间转换技能。
+
+```bash
+# Hermes SKILL.md → Claude 命令格式
+skillrelay convert ./skill.md --from hermes --to claude
+
+# Claude 命令 → Hermes SKILL.md 格式
+skillrelay convert ./command.md --from claude --to hermes
+
+# 指定输出路径与预览模式
+skillrelay convert ./skill.md ./converted.md --from hermes --to claude --dry-run
+skillrelay convert ./skill.md --from hermes --to claude --json
+```

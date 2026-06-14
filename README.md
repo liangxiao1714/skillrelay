@@ -357,3 +357,35 @@ skillrelay sync hermes --dry-run        # preview without writing
 skillrelay sync hermes --overwrite      # overwrite existing
 skillrelay sync claude --json           # JSON output with per-skill results
 ```
+
+---
+
+### `skillrelay tag <skill-id>`
+
+List, add, remove, or replace tags on a skill without re-importing.
+
+```bash
+skillrelay tag my-skill                          # list current tags
+skillrelay tag my-skill --add typescript         # add a tag
+skillrelay tag my-skill --remove testing         # remove a tag
+skillrelay tag my-skill --set alpha beta gamma   # replace all tags
+skillrelay tag my-skill --json                   # JSON output
+```
+
+---
+
+### `skillrelay convert <input> [output]`
+
+Convert a skill between agent native formats without the registry.
+
+```bash
+# Hermes SKILL.md → Claude command format
+skillrelay convert ./skill.md --from hermes --to claude
+
+# Claude command → Hermes SKILL.md format
+skillrelay convert ./command.md --from claude --to hermes
+
+# Specify output path and use dry-run
+skillrelay convert ./skill.md ./converted.md --from hermes --to claude --dry-run
+skillrelay convert ./skill.md --from hermes --to claude --json
+```
