@@ -6,7 +6,10 @@
 
 > 你的 Agent 技能中继站。
 
-SkillRelay 是一个以 CLI 为核心的本地技能仓库与多 Agent 桥接工具，支持跨 AI Agent（如 Hermes、OpenClaw、Claude Code、OpenCode、Codex 等）进行技能的发现、导入、同步、转换与发布。
+SkillRelay 是一个以 CLI 为核心的本地技能仓库与多 Agent 桥接工具，支持跨 AI Agent（如 Hermes、Claude Code、OpenClaw、OpenCode、Codex 等）进行技能的发现、导入、同步、转换与发布。
+
+[![许可证: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Node ≥ 20](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org/)
 
 ---
 
@@ -18,94 +21,306 @@ SkillRelay 通过以下方式解决这一碎片化问题：
 
 - 一个**本地统一仓库**，作为所有 Agent 技能的中心枢纽
 - 一套**适配器体系**，将技能转换为各 Agent 的原生格式
-- 一条**完整生命周期流程**：发现 → 导入 → 适配 → 同步 → 发布
+- 一条**完整生命周期流程**：发现 → 导入 → 适配 → 同步 → 导出
+- 一个**双向生命周期**：Agent 原生技能可以流回本地仓库，再发布到外部来源
 
 目标不是让每个 Agent 加载所有技能，而是给你一个统一管理所有技能的地方，并以一致的方式将技能送达目标 Agent。
 
 SkillRelay 是一个本地工具 —— 它运行在你的机器上并维护本地仓库。它不是共享的全局运行时，也不是云端托管服务。
 
+---
+
+## 安装
+
+```bash
+npm install -g skillrelay
+```
+
+需要 **Node.js ≥ 20**。
+
+---
+
+## 快速上手
+
+```bash
+# 1. 初始化本地仓库（默认路径：~/.skillrelay）
+skillrelay init
+
+# 2. 从本地 Markdown 文件导入技能
+skillrelay import ./my-skill.md
+
+# 3. 从已安装的 Hermes 技能导入
+skillrelay import hermes:code-review
+
+# 4. 列出仓库中的所有技能
+skillrelay list
+
+# 5. 将技能导出到 Claude Code 的命令目录
+skillrelay export <skill-id> claude
+
+# 6. 检查仓库健康状态
+skillrelay doctor
+```
+
+---
+
 ## 核心概念
 
 | 概念 | 说明 |
 |---|---|
-| **Skill（技能）** | 一个可复用的 Agent 知识、工作流或能力单元 |
-| **Source（来源）** | 技能的获取来源 —— SkillHub、GitHub 仓库、本地目录，或其他 Agent 的技能目录 |
-| **Registry（仓库）** | 本机上的规范存储，保存所有已纳管的技能 |
-| **Adapter（适配器）** | 针对特定 Agent 的集成层，负责导入、导出、格式转换和同步 |
+| **技能（Skill）** | 可复用的 Agent 知识、工作流或能力单元 |
+| **来源（Source）** | 技能的来源 —— 本地文件、Git 仓库或其他 Agent 的技能目录 |
+| **仓库（Registry）** | 存储在本地机器上的规范化技能中心 |
+| **适配器（Adapter）** | 每个 Agent 的集成层，处理导入、导出、格式转换和同步 |
 
-## 计划功能
+---
 
-- 本地技能仓库
-- 多来源发现与搜索
-- 导入与导出工作流
-- 针对不同 Agent 的适配
-- 仓库与 Agent 之间的 pull / push / sync
-- 技能格式转换
-- 校验与健康检查
-- 版本追踪与冲突处理
-- 可信度与安全检查
-- 将技能发布回外部来源
-- 可扩展的来源与适配器体系
-
-## 工作流程
+## 工作流
 
 ```
-外部来源              -->   本地仓库    -->   Agent
-（SkillHub、Git、            （本机）         （Hermes、Claude、
-  本地目录……）                                 OpenClaw……）
+外部来源          -->  本地仓库           -->  目标 Agent
+（本地文件、Git、      (~/.skillrelay)         （Hermes、Claude、
+  Hermes、…）                                   OpenClaw、…）
 
-                <--   双向流转   <--
+              <--      双向流转      <--
 ```
 
-典型的 SkillRelay 使用流程：
+典型的 SkillRelay 流程：
 
-1. 从外部来源或其他 Agent **发现**一个技能
-2. 将其**导入**本地仓库
-3. 为目标 Agent 的格式进行**适配**
-4. **同步**到该 Agent
-5. 可选：将技能**发布**回外部来源
+1. **发现**：从本地文件或另一个 Agent 发现技能
+2. **导入**：将技能导入本地仓库
+3. **搜索**：使用本地搜索引擎查找技能
+4. **导出**：将技能导出为另一个 Agent 的原生格式
+5. **更新**：当来源变更时重新导入
 
-## CLI
+---
 
-主命令为 `skillrelay`（计划短别名：`sr`、`relay`）。
+## 命令参考
 
-```
-skillrelay search <query>               # 搜索仓库和来源中的技能
-skillrelay install <source>             # 从来源导入技能到本地仓库
-skillrelay push <agent> <skill>         # 将技能推送到指定 Agent
-skillrelay pull <agent> <skill>         # 从指定 Agent 拉取技能
-skillrelay sync <agent>                 # 与指定 Agent 同步仓库
-skillrelay publish <skill>              # 准备技能制品或发布到已配置的外部来源
-skillrelay status <skill>               # 查看技能所在位置及其同步状态
-skillrelay source add <url>             # 添加技能来源
-skillrelay source list                  # 列出已配置的来源
-skillrelay source enable/disable <name> # 启用或停用某个来源
-skillrelay list                         # 列出仓库中的技能
-skillrelay info <skill>                 # 查看技能详情
+### `skillrelay init`
+
+初始化本地仓库。
+
+```bash
+skillrelay init                       # 使用默认路径 ~/.skillrelay
+skillrelay --registry ./my-reg init   # 指定自定义路径
 ```
 
-> 注意：以上命令为计划内容，可能在设计阶段调整。
+---
+
+### `skillrelay import <path>`
+
+从本地文件、目录或 Hermes 导入技能到仓库。
+
+```bash
+skillrelay import ./skill.md          # 从 SKILL.md 文件导入
+skillrelay import ./my-skill-dir/     # 从包含 SKILL.md 的目录导入
+skillrelay import hermes:code-review  # 从已安装的 Hermes 技能拉取
+
+# 选项
+skillrelay import ./skill.md --dry-run          # 解析但不写入
+skillrelay import ./skill.md --name my-skill    # 覆盖检测到的名称
+skillrelay import hermes:code-review --json     # JSON 输出
+```
+
+---
+
+### `skillrelay list`
+
+列出仓库中的所有技能。
+
+```bash
+skillrelay list
+skillrelay list --json
+```
+
+---
+
+### `skillrelay info <skill-id>`
+
+查看单个技能的完整详情。支持精确 ID 或名称前缀匹配。
+
+```bash
+skillrelay info my-skill-a1b2c3d4e5
+skillrelay info my-skill              # 前缀匹配
+skillrelay info my-skill --json
+```
+
+---
+
+### `skillrelay status <skill-id>`
+
+查看技能的仓库状态、来源及各适配器同步状态。
+
+```bash
+skillrelay status my-skill-a1b2c3d4e5
+skillrelay status my-skill --json
+```
+
+---
+
+### `skillrelay search [query]`
+
+按名称、摘要、描述、标签、分类和作者搜索本地仓库。
+
+```bash
+skillrelay search "代码审查"
+skillrelay search --tag typescript
+skillrelay search --category productivity --limit 10
+skillrelay search --json
+```
+
+---
+
+### `skillrelay validate <skill-id>`
+
+验证技能的元数据和内容，并更新仓库中的 `validation_state`。
+
+```bash
+skillrelay validate my-skill-a1b2c3d4e5
+skillrelay validate my-skill --json
+```
+
+---
+
+### `skillrelay export <skill-id> <agent>`
+
+将技能从仓库导出为 Agent 原生格式。
+
+**支持的 Agent：** `hermes`、`claude`
+
+```bash
+# 导出到 Hermes（默认写入 ~/.hermes/skills/）
+skillrelay export my-skill-a1b2c3d4e5 hermes
+skillrelay export my-skill hermes --target ~/custom/path
+
+# 导出到 Claude Code（默认写入 ~/.claude/commands/）
+skillrelay export my-skill-a1b2c3d4e5 claude
+skillrelay export my-skill claude --overwrite  # 已存在则覆盖
+
+# 通用选项
+skillrelay export my-skill hermes --dry-run    # 预览，不实际写入
+skillrelay export my-skill claude --json       # JSON 输出
+```
+
+---
+
+### `skillrelay update <skill-id>`
+
+从原始来源 URI 重新导入技能，保留仓库状态和适配器同步元数据。
+
+```bash
+skillrelay update my-skill-a1b2c3d4e5
+skillrelay update my-skill --dry-run
+skillrelay update my-skill --json
+```
+
+---
+
+### `skillrelay remove <skill-id>`
+
+软删除仓库中的技能（目录重命名保留，可恢复）。
+
+```bash
+skillrelay remove my-skill-a1b2c3d4e5 --confirm
+skillrelay remove my-skill --confirm --json
+```
+
+---
+
+### `skillrelay doctor`
+
+检查仓库健康状态：初始化、孤立目录、损坏技能、软删除条目。
+
+```bash
+skillrelay doctor                     # 健康退出 0，有问题退出 1
+skillrelay doctor --json
+```
+
+---
+
+### `skillrelay config`
+
+获取、设置或删除配置项。
+
+```bash
+skillrelay config get                          # 查看所有配置
+skillrelay config get log_level                # 查看单个配置项
+skillrelay config set default_adapter claude   # 设置值
+skillrelay config set color false              # 禁用颜色输出
+skillrelay config unset default_adapter        # 删除配置项
+skillrelay config get --json
+```
+
+**允许的配置键：** `default_registry`、`default_adapter`、`color`、`log_level`
+
+---
+
+### `skillrelay source`
+
+管理技能来源（持久化存储于 `sources.yaml`）。
+
+```bash
+skillrelay source add https://example.com/skills
+skillrelay source list
+skillrelay source list --json
+skillrelay source enable <source-id>
+skillrelay source disable <source-id>
+skillrelay source remove <source-id>
+```
+
+---
+
+## 全局选项
+
+所有命令均支持以下顶级选项：
+
+| 选项 | 说明 |
+|---|---|
+| `--registry <path>` | 覆盖仓库根路径（默认：`~/.skillrelay`） |
+| `--json` | 输出 JSON 而非人类可读文本 |
+| `--no-color` | 禁用 ANSI 颜色输出 |
+| `--quiet` | 屏蔽信息输出，仅显示错误 |
+| `--version` | 显示版本号 |
+| `--help` | 显示帮助信息 |
+
+---
+
+## 退出码
+
+| 代码 | 含义 |
+|---|---|
+| `0` | 成功 |
+| `1` | 通用错误或健康检查发现问题 |
+| `2` | 仓库未初始化 |
+| `3` | 技能未找到 |
+| `4` | 冲突（技能已存在于目标位置） |
+| `5` | 适配器不可用 |
+
+---
 
 ## 文档
 
 | 文档 | 说明 |
 |---|---|
-| [架构设计](./docs/zh-CN/architecture.md) | 核心组件、数据流与设计原则 |
-| [开发路线图](./docs/zh-CN/roadmap.md) | 各阶段开发计划 |
-| [设计讨论](./docs/design-discussion.md) | 项目原始设计笔记 |
-| [贡献指南](./CONTRIBUTING.zh-CN.md) | 如何参与贡献 |
+| [架构设计](./docs/architecture.md) | 核心组件、数据流与设计原则 |
+| [路线图](./docs/roadmap.md) | 已完成阶段与规划中功能 |
+| [变更日志](./CHANGELOG.md) | 版本历史 |
+| [贡献指南](./CONTRIBUTING.md) | 如何参与贡献 |
+
+---
 
 ## 项目状态
 
-**SkillRelay 目前处于设计与规划阶段。**
+**SkillRelay v0.1.0 是首个可用版本。**
 
-仓库目前包含文档和架构定义，尚未开始实现。欢迎对设计、架构和文档提出贡献。
+核心仓库、导入/导出流程、搜索、健康检查、配置、更新命令及适配器体系（Hermes + Claude）均已实现并通过测试，共 295 条测试，覆盖率 ≥ 93%。
 
-详见[开发路线图](./docs/zh-CN/roadmap.md)。
+---
 
-## 参与贡献
+## 贡献
 
-欢迎贡献！请阅读 [CONTRIBUTING.zh-CN.md](./CONTRIBUTING.zh-CN.md) 了解如何开始。
+欢迎参与贡献！请阅读 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解详情。
 
 ## 许可证
 
