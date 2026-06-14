@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
@@ -10,7 +9,7 @@ import { resolvePath } from "../util/path.js";
 // Register built-in adapters
 registerAdapter(hermesAdapter);
 
-// Read version from package.json (synchronous at startup is acceptable per coding-standards §8)
+// Read version from package.json (synchronous at startup is acceptable per coding-standards.md §8)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 // reason: synchronous fs at CLI startup is acceptable per coding-standards.md §8
@@ -40,6 +39,8 @@ async function registerCommands(): Promise<void> {
     { default: statusCmd },
     { default: validateCmd },
     { default: exportCmd },
+    { default: removeCmd },
+    { default: sourceCmd },
   ] = await Promise.all([
     import("./commands/init.js"),
     import("./commands/list.js"),
@@ -48,6 +49,8 @@ async function registerCommands(): Promise<void> {
     import("./commands/status.js"),
     import("./commands/validate.js"),
     import("./commands/export.js"),
+    import("./commands/remove.js"),
+    import("./commands/source.js"),
   ]);
 
   program.addCommand(initCmd());
@@ -57,10 +60,9 @@ async function registerCommands(): Promise<void> {
   program.addCommand(statusCmd());
   program.addCommand(validateCmd());
   program.addCommand(exportCmd());
+  program.addCommand(removeCmd());
+  program.addCommand(sourceCmd());
 }
 
 await registerCommands();
 program.parse(process.argv);
-
-// Suppress unused import warning for createRequire
-void createRequire;

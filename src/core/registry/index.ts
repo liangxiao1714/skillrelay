@@ -18,3 +18,4 @@ export {
   skillOriginalDirPath,
   skillAssetsDirPath,
 } from "./layout.js";
+export { softDeleteSkill } from "./write.js";

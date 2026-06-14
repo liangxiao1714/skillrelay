@@ -111,3 +111,32 @@ export async function updateSkill(root: string, updatedSkill: Skill): Promise<vo
   await atomicWriteFile(yamlPath, yamlDump(updatedSkill));
   await touchRegistry(root);
 }
+
+/**
+ * Soft-delete a skill by renaming its directory to `<id>.removed-<timestamp>`.
+ * The skill data is preserved for auditing. Use `hardDeleteSkill` for permanent removal.
+ *
+ * @throws `RegistryNotInitializedError` if registry not initialized.
+ * @throws `SkillNotFoundError` if the skill does not exist.
+ */
+export async function softDeleteSkill(
+  root: string,
+  skillId: import("../schema/index.js").SkillId,
+): Promise<void> {
+  const { RegistryNotInitializedError: RNI, SkillNotFoundError: SNF } = await import(
+    "../errors/index.js"
+  );
+  if (!(await registryExists(root))) throw new RNI(root);
+
+  const skillDir = skillDirPath(root, skillId);
+  try {
+    await stat(skillDir);
+  } catch {
+    throw new SNF(skillId);
+  }
+
+  const { rename } = await import("node:fs/promises");
+  const timestamp = Date.now();
+  await rename(skillDir, `${skillDir}.removed-${timestamp}`);
+  await touchRegistry(root);
+}
