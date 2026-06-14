@@ -41,6 +41,8 @@ async function registerCommands(): Promise<void> {
     { default: exportCmd },
     { default: removeCmd },
     { default: sourceCmd },
+    { default: searchCmd },
+    { default: doctorCmd },
   ] = await Promise.all([
     import("./commands/init.js"),
     import("./commands/list.js"),
@@ -51,6 +53,8 @@ async function registerCommands(): Promise<void> {
     import("./commands/export.js"),
     import("./commands/remove.js"),
     import("./commands/source.js"),
+    import("./commands/search.js"),
+    import("./commands/doctor.js"),
   ]);
 
   program.addCommand(initCmd());
@@ -62,6 +66,8 @@ async function registerCommands(): Promise<void> {
   program.addCommand(exportCmd());
   program.addCommand(removeCmd());
   program.addCommand(sourceCmd());
+  program.addCommand(searchCmd());
+  program.addCommand(doctorCmd());
 }
 
 await registerCommands();

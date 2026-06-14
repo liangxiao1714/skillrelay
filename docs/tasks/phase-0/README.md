@@ -1,6 +1,6 @@
 # Phase 0: Foundation
 
-- Status: in-progress
+- Status: done
 - Goal: Establish the project skeleton, canonical schema, and core registry I/O.
 
 ## Task Index
@@ -21,11 +21,13 @@
 All Phase 0 tasks are complete. The project has:
 - Full TypeScript scaffold (strict mode, ESM, pnpm, tsup, vitest, Biome)
 - Canonical skill schema (zod, branded types, all field types)
-- Registry init/read/write (filesystem-only, atomic writes, conflict detection)
+- Registry init/read/write (filesystem-only, atomic writes, soft-delete)
 - Import pipeline (local file/dir, gray-matter front-matter parsing, canonical record building)
-- CLI commands: init, list, info, import, status, validate, export
+- Source management (add/list/remove/enable/disable — persisted in sources.yaml)
+- CLI commands: init, list, info, import, status, validate, export, remove, source
 - Hermes adapter: detect, discover, import, export, status, validate
-- 87 tests passing: 63 unit + 12 integration + 12 E2E
+- 180 tests passing: 93 unit + 12 integration + 21 E2E + coverage ≥ 87% (threshold 80%)
+- All v0.1 acceptance criteria verified against built binary (`dist/cli/index.js`)
 
 ## References
 

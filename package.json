@@ -9,7 +9,7 @@
   "bin": {
     "skillrelay": "./bin/skillrelay"
   },
-  "files": ["dist", "bin"],
+  "files": ["dist", "bin", "README.md", "LICENSE"],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
