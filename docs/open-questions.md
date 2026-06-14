@@ -25,10 +25,6 @@ When mirroring an `Open Questions` section from another doc, copy the question h
 
 | ID | Question | Surfaced in | Candidates | Trigger to decide | Status |
 |---|---|---|---|---|---|
-| Q-0001 | Registry storage backend | [canonical-skill-format.md §9](./canonical-skill-format.md) | filesystem-only, SQLite, hybrid | Before T-0003 (registry init) | open |
-| Q-0002 | Skill ID generation algorithm | [canonical-skill-format.md §9](./canonical-skill-format.md) | normalized-name + origin hash, content hash, ULID, combined | Before T-0002 (schema) | open |
-| Q-0003 | Default version when source has none | [canonical-skill-format.md §9](./canonical-skill-format.md) | `0.0.0`, `unversioned`, error | Before T-0002 (schema) | open |
-| Q-0004 | Canonical content format coverage in v0.1 | [canonical-skill-format.md §9](./canonical-skill-format.md) | Markdown only, Markdown + plain text, anything | Before T-0002 (schema) | open |
 | Q-0005 | Adapter loading model (dynamic discovery) | [adapter-contract.md §11](./adapter-contract.md) | static built-in (v0.1), dynamic npm `@skillrelay/adapter-*`, both | v0.1 static decided in [ADR-0001](./decisions/0001-language-and-stack.md); dynamic deferred | partially resolved |
 | Q-0006 | Adapter execution model | [adapter-contract.md §11](./adapter-contract.md) | in-process, subprocess | Before Hermes adapter skeleton (T-0007) | open |
 | Q-0007 | Adapter target configuration shape | [adapter-contract.md §11](./adapter-contract.md) | per-adapter config file, central config, env vars, hybrid | Before [specs/config-file.md](./specs/config-file.md) | open |
@@ -44,6 +40,10 @@ When mirroring an `Open Questions` section from another doc, copy the question h
 |---|---|---|---|---|
 | Q-R0001 | Implementation language and stack | TypeScript on Node.js ≥ 20 LTS, ESM, pnpm, tsup, vitest, commander, zod, js-yaml, Biome | [ADR-0001](./decisions/0001-language-and-stack.md) | 2026-05-25 |
 | Q-R0002 | Earlier codename "SkillMesh" — keep or drop? | Drop; deprecated in favor of SkillRelay | [../CLAUDE.md](../CLAUDE.md) §Project Identity | 2026-05-24 |
+| Q-R0003 | Registry storage backend | Filesystem-only for v0.1; one directory per skill, human-inspectable YAML + Markdown; SQLite deferred | [ADR-0002](./decisions/0002-v0-1-registry-and-canonical-skill-defaults.md) | 2026-06-02 |
+| Q-R0004 | Skill ID generation algorithm | `<normalized-name>-<first-10-hex-of-SHA-256-over-identity-payload>`; deterministic, same-origin yields same ID | [ADR-0002](./decisions/0002-v0-1-registry-and-canonical-skill-defaults.md) | 2026-06-02 |
+| Q-R0005 | Default version when source has none | `unversioned`; honest, warns on validation, not an error | [ADR-0002](./decisions/0002-v0-1-registry-and-canonical-skill-defaults.md) | 2026-06-02 |
+| Q-R0006 | Canonical content format coverage in v0.1 | Markdown only; non-Markdown sources fail or warn clearly | [ADR-0002](./decisions/0002-v0-1-registry-and-canonical-skill-defaults.md) | 2026-06-02 |
 
 ## Rules
 

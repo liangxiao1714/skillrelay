@@ -82,6 +82,7 @@ How we will know, later, whether this decision was correct. State concrete check
 
 | ADR | Title | Status | Date |
 |---|---|---|---|
+| [0002](./0002-v0-1-registry-and-canonical-skill-defaults.md) | v0.1 registry and canonical skill defaults | accepted | 2026-06-02 |
 | [0001](./0001-language-and-stack.md) | Language and core stack | accepted | 2026-05-25 |
 
 > Add new entries **above** this line. Keep the table newest-first.
