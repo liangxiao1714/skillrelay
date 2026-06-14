@@ -3,11 +3,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { registerAdapter } from "../adapters/base/registry.js";
+import { claudeAdapter } from "../adapters/claude/index.js";
 import { hermesAdapter } from "../adapters/hermes/index.js";
 import { resolvePath } from "../util/path.js";
 
 // Register built-in adapters
 registerAdapter(hermesAdapter);
+registerAdapter(claudeAdapter);
 
 // Read version from package.json (synchronous at startup is acceptable per coding-standards.md §8)
 const __filename = fileURLToPath(import.meta.url);

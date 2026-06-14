@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { Command } from "commander";
-import type { AdapterExportOptions } from "../../adapters/base/adapter.js";
+import type { AdapterExportOptions, AdapterExportResult } from "../../adapters/base/adapter.js";
 import { getAdapter } from "../../adapters/base/registry.js";
+import { exportClaudeSkill } from "../../adapters/claude/export.js";
 import { exportHermesSkill } from "../../adapters/hermes/export.js";
 import { AdapterNotAvailableError } from "../../core/errors/index.js";
 import { readSkill, skillContentPath, updateSkill } from "../../core/registry/index.js";
@@ -10,6 +11,76 @@ import { nowIso } from "../../util/time.js";
 import { EXIT_CODES, errorToExitCode } from "../errors.js";
 import { toJson } from "../output/format-json.js";
 import { err, out } from "../output/logger.js";
+
+/** Handle an export result (shared between adapters). */
+async function handleExportResult(
+  result: AdapterExportResult,
+  skill: import("../../core/schema/index.js").Skill,
+  adapterName: string,
+  registryRoot: string,
+  json: boolean,
+): Promise<number> {
+  if (result.kind === "conflict") {
+    if (json) {
+      out(toJson({ outcome: "conflict", message: result.message }));
+    } else {
+      err(`Conflict: ${result.message}`);
+      err(`Suggested: ${result.suggestedActions.join(", ")}`);
+    }
+    return EXIT_CODES.CONFLICT;
+  }
+
+  if (result.kind === "dry-run") {
+    if (json) {
+      out(
+        toJson({
+          outcome: "dry-run",
+          wouldWrite: result.wouldWrite,
+          targetPath: result.targetPath,
+        }),
+      );
+    } else {
+      out("[dry-run] Would write:");
+      for (const f of result.wouldWrite) out(`  ${f}`);
+      out(`Target: ${result.targetPath}`);
+    }
+    return EXIT_CODES.SUCCESS;
+  }
+
+  // kind === "exported" — update adapters state in skill.yaml
+  const exportedAt = nowIso();
+  const prevAdapter = skill.adapters?.[adapterName];
+  const newAdapterState: AdapterState = {
+    supported: true,
+    last_exported_at: exportedAt,
+    last_imported_at: prevAdapter?.last_imported_at ?? null,
+    target_path: result.targetPath,
+    notes: "Exported via skillrelay export command.",
+  };
+  const updatedSkill = await import("../../core/registry/read.js").then((m) =>
+    m.readSkill(registryRoot, skill.id),
+  );
+  const existingAdapters: Record<string, AdapterState> = updatedSkill.adapters ?? {};
+  await updateSkill(registryRoot, {
+    ...updatedSkill,
+    adapters: { ...existingAdapters, [adapterName]: newAdapterState },
+  });
+
+  if (json) {
+    out(
+      toJson({
+        outcome: "exported",
+        targetPath: result.targetPath,
+        writtenFiles: result.writtenFiles,
+      }),
+    );
+  } else {
+    out(`Exported: ${skill.name}`);
+    out(`  Target: ${result.targetPath}`);
+    for (const f of result.writtenFiles) out(`  Written: ${f}`);
+  }
+  return EXIT_CODES.SUCCESS;
+}
 
 export default function exportCommand(): Command {
   return new Command("export")
@@ -32,81 +103,35 @@ export default function exportCommand(): Command {
           const contentMdPath = skillContentPath(opts.registry, skill.id);
           const contentMd = await readFile(contentMdPath, "utf8");
 
+          // Build export options (exactOptionalPropertyTypes safe)
+          const exportOpts: AdapterExportOptions = {};
+          if (options.dryRun === true) exportOpts.dryRun = true;
+          if (options.overwrite === true) exportOpts.overwrite = true;
+          if (options.target !== undefined) exportOpts.targetPath = options.target;
+
+          let result: AdapterExportResult;
+
           if (agentArg === "hermes") {
-            // Build export options strictly (exactOptionalPropertyTypes)
-            const exportOpts: AdapterExportOptions = {};
-            if (options.dryRun === true) exportOpts.dryRun = true;
-            if (options.overwrite === true) exportOpts.overwrite = true;
-            if (options.target !== undefined) exportOpts.targetPath = options.target;
-
-            const result = await exportHermesSkill(skill, contentMd, exportOpts);
-
-            if (result.kind === "conflict") {
-              if (opts.json) {
-                out(toJson({ outcome: "conflict", message: result.message }));
-              } else {
-                err(`Conflict: ${result.message}`);
-                err(`Suggested: ${result.suggestedActions.join(", ")}`);
-              }
-              process.exit(EXIT_CODES.CONFLICT);
+            result = await exportHermesSkill(skill, contentMd, exportOpts);
+          } else if (agentArg === "claude") {
+            result = await exportClaudeSkill(skill, contentMd, exportOpts);
+          } else {
+            const adapter = getAdapter(agentArg);
+            if (adapter === undefined) {
+              throw new AdapterNotAvailableError(agentArg);
             }
-
-            if (result.kind === "dry-run") {
-              if (opts.json) {
-                out(
-                  toJson({
-                    outcome: "dry-run",
-                    wouldWrite: result.wouldWrite,
-                    targetPath: result.targetPath,
-                  }),
-                );
-              } else {
-                out("[dry-run] Would write:");
-                for (const f of result.wouldWrite) out(`  ${f}`);
-                out(`Target: ${result.targetPath}`);
-              }
-              process.exit(EXIT_CODES.SUCCESS);
-            }
-
-            // kind === "exported" — update adapters state in skill.yaml
-            const exportedAt = nowIso();
-            const prevHermes = skill.adapters?.hermes;
-            const newHermesState: AdapterState = {
-              supported: true,
-              last_exported_at: exportedAt,
-              last_imported_at: prevHermes?.last_imported_at ?? null,
-              target_path: result.targetPath,
-              notes: "Exported via skillrelay export command.",
-            };
-            const updatedSkill = {
-              ...skill,
-              adapters: { ...skill.adapters, hermes: newHermesState },
-            };
-            await updateSkill(opts.registry, updatedSkill);
-
-            if (opts.json) {
-              out(
-                toJson({
-                  outcome: "exported",
-                  targetPath: result.targetPath,
-                  writtenFiles: result.writtenFiles,
-                }),
-              );
-            } else {
-              out(`Exported: ${skill.name}`);
-              out(`  Target: ${result.targetPath}`);
-              for (const f of result.writtenFiles) out(`  Written: ${f}`);
-            }
-            process.exit(EXIT_CODES.SUCCESS);
+            err(`Adapter "${agentArg}" is registered but generic export is not yet implemented.`);
+            process.exit(EXIT_CODES.ADAPTER_UNAVAILABLE);
           }
 
-          // Non-hermes: try adapter registry
-          const adapter = getAdapter(agentArg);
-          if (adapter === undefined) {
-            throw new AdapterNotAvailableError(agentArg);
-          }
-          err(`Adapter "${agentArg}" is registered but generic export is not yet implemented.`);
-          process.exit(EXIT_CODES.ADAPTER_UNAVAILABLE);
+          const exitCode = await handleExportResult(
+            result,
+            skill,
+            agentArg,
+            opts.registry,
+            opts.json,
+          );
+          process.exit(exitCode);
         } catch (e) {
           err(`Error: ${e instanceof Error ? e.message : String(e)}`);
           process.exit(errorToExitCode(e));
