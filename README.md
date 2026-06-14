@@ -327,3 +327,33 @@ Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) to g
 ## License
 
 [MIT](./LICENSE)
+
+---
+
+### `skillrelay trust <skill-id> <level>`
+
+Set the trust level for a skill in the registry.
+
+**Levels:** `trusted`, `community`, `untrusted`, `unknown`
+
+```bash
+skillrelay trust my-skill-a1b2c3d4e5 trusted
+skillrelay trust my-skill community
+skillrelay trust my-skill untrusted --json
+```
+
+---
+
+### `skillrelay sync <agent>`
+
+Export all active skills from the registry to an agent in one command.
+
+**Supported agents:** `hermes`, `claude`
+
+```bash
+skillrelay sync hermes                  # export all active skills to Hermes
+skillrelay sync claude                  # export all active skills to Claude Code
+skillrelay sync hermes --dry-run        # preview without writing
+skillrelay sync hermes --overwrite      # overwrite existing
+skillrelay sync claude --json           # JSON output with per-skill results
+```

@@ -325,3 +325,33 @@ skillrelay source remove <source-id>
 ## 许可证
 
 [MIT](./LICENSE)
+
+---
+
+### `skillrelay trust <skill-id> <level>`
+
+设置仓库中技能的信任级别。
+
+**可选级别：** `trusted`（受信）、`community`（社区）、`untrusted`（不受信）、`unknown`（未知）
+
+```bash
+skillrelay trust my-skill-a1b2c3d4e5 trusted
+skillrelay trust my-skill community
+skillrelay trust my-skill untrusted --json
+```
+
+---
+
+### `skillrelay sync <agent>`
+
+将仓库中所有活跃技能批量导出到指定 Agent。
+
+**支持的 Agent：** `hermes`、`claude`
+
+```bash
+skillrelay sync hermes                  # 将所有活跃技能导出到 Hermes
+skillrelay sync claude                  # 将所有活跃技能导出到 Claude Code
+skillrelay sync hermes --dry-run        # 预览，不实际写入
+skillrelay sync hermes --overwrite      # 覆盖已存在的文件
+skillrelay sync claude --json           # JSON 输出，包含每个技能的结果
+```

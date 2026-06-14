@@ -47,6 +47,8 @@ async function registerCommands(): Promise<void> {
     { default: doctorCmd },
     { default: configCmd },
     { default: updateCmd },
+    { default: trustCmd },
+    { default: syncCmd },
   ] = await Promise.all([
     import("./commands/init.js"),
     import("./commands/list.js"),
@@ -61,6 +63,8 @@ async function registerCommands(): Promise<void> {
     import("./commands/doctor.js"),
     import("./commands/config.js"),
     import("./commands/update.js"),
+    import("./commands/trust.js"),
+    import("./commands/sync.js"),
   ]);
 
   program.addCommand(initCmd());
@@ -76,6 +80,8 @@ async function registerCommands(): Promise<void> {
   program.addCommand(doctorCmd());
   program.addCommand(configCmd());
   program.addCommand(updateCmd());
+  program.addCommand(trustCmd());
+  program.addCommand(syncCmd());
 }
 
 await registerCommands();
