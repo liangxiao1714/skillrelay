@@ -129,33 +129,20 @@ This invariant is enforced by reviewer discipline (and, later, by CI checks once
 
 ## Phase Index
 
-| Phase | Goal | Index |
-|---|---|---|
-| 0 | Foundation (scaffold + canonical schema + registry I/O) | [phase-0/README.md](./phase-0/README.md) (planned) |
-| 1 | Core CLI (list, install, info, status, remove, source) | (planned) |
-| 2 | First Adapter end-to-end (Hermes) | (planned) |
-| 3 | Multi-source search & discovery | (planned) |
-| 4 | Conversion & validation across agents | (planned) |
-| 5 | Publish & ecosystem | (planned) |
-
-Phase definitions track [../roadmap.md](../roadmap.md).
-
-## Currently Planned Task Tickets
-
-These task tickets are planned (will be written next, in this order):
-
-| ID | Title | Phase | Depends on |
+| Phase | Goal | Index | Status |
 |---|---|---|---|
-| T-0001 | Scaffold TypeScript project | 0 | none |
-| T-0002 | Canonical skill schema (zod) | 0 | T-0001, specs/schema/skill.md |
-| T-0003 | Registry init / read / write | 0 | T-0002, specs/registry-layout.md |
-| T-0004 | Import from local file/dir | 0 | T-0003 |
-| T-0005 | CLI: list / info / status | 0 | T-0004, specs/cli-commands.md |
-| T-0006 | Validate command | 0 | T-0002, T-0004 |
-| T-0007 | Hermes adapter skeleton (detect, discover, manifest) | 0 | T-0001, adapters/hermes.md |
-| T-0008 | Hermes adapter: export / push | 0 | T-0003, T-0007 |
+| 0 | Foundation (scaffold + canonical schema + registry I/O) | [phase-0/README.md](./phase-0/README.md) | done |
+| 1 | Core CLI (list, install, info, status, remove, source, search, doctor) | [phase-1/README.md](./phase-1/README.md) | done |
+| 2 | Agent adapters (Hermes + Claude), config, update | [phase-2/README.md](./phase-2/README.md) | done |
+| 3 | Coverage & build verification | [phase-3/README.md](./phase-3/README.md) | done |
+| 4 | trust + sync commands | [phase-4/README.md](./phase-4/README.md) | done |
+| 5 | tag + convert commands | [phase-5/README.md](./phase-5/README.md) | done |
+| 6 | Acceptance documentation | [phase-6/README.md](./phase-6/README.md) | done |
+| 7 | Multi-source discovery (GitHub / SkillHub federation) | (planned) | todo |
+| 8 | Publish, version history, community ecosystem | (planned) | todo |
+| 9 | Additional adapters (OpenClaw, OpenCode, Codex) | (planned) | todo |
 
-> Task IDs are reserved here even though the task files have not yet been authored, to keep numbering stable.
+Phase definitions track [../roadmap.md](../roadmap.md). The full verification record lives in [../acceptance.md](../acceptance.md).
 
 ## References
 

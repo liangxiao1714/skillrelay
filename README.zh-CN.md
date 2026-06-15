@@ -271,66 +271,9 @@ skillrelay source remove <source-id>
 
 ---
 
-## 全局选项
-
-所有命令均支持以下顶级选项：
-
-| 选项 | 说明 |
-|---|---|
-| `--registry <path>` | 覆盖仓库根路径（默认：`~/.skillrelay`） |
-| `--json` | 输出 JSON 而非人类可读文本 |
-| `--no-color` | 禁用 ANSI 颜色输出 |
-| `--quiet` | 屏蔽信息输出，仅显示错误 |
-| `--version` | 显示版本号 |
-| `--help` | 显示帮助信息 |
-
----
-
-## 退出码
-
-| 代码 | 含义 |
-|---|---|
-| `0` | 成功 |
-| `1` | 通用错误或健康检查发现问题 |
-| `2` | 仓库未初始化 |
-| `3` | 技能未找到 |
-| `4` | 冲突（技能已存在于目标位置） |
-| `5` | 适配器不可用 |
-
----
-
-## 文档
-
-| 文档 | 说明 |
-|---|---|
-| [架构设计](./docs/architecture.md) | 核心组件、数据流与设计原则 |
-| [路线图](./docs/roadmap.md) | 已完成阶段与规划中功能 |
-| [变更日志](./CHANGELOG.md) | 版本历史 |
-| [贡献指南](./CONTRIBUTING.md) | 如何参与贡献 |
-
----
-
-## 项目状态
-
-**SkillRelay v0.1.0 是首个可用版本。**
-
-核心仓库、导入/导出流程、搜索、健康检查、配置、更新命令及适配器体系（Hermes + Claude）均已实现并通过测试，共 295 条测试，覆盖率 ≥ 93%。
-
----
-
-## 贡献
-
-欢迎参与贡献！请阅读 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解详情。
-
-## 许可证
-
-[MIT](./LICENSE)
-
----
-
 ### `skillrelay trust <skill-id> <level>`
 
-设置仓库中技能的信任级别。
+设置仓库中技能的信任级别。持久化到 `skill.safety.trust_level`。
 
 **可选级别：** `trusted`（受信）、`community`（社区）、`untrusted`（不受信）、`unknown`（未知）
 
@@ -387,3 +330,63 @@ skillrelay convert ./command.md --from claude --to hermes
 skillrelay convert ./skill.md ./converted.md --from hermes --to claude --dry-run
 skillrelay convert ./skill.md --from hermes --to claude --json
 ```
+
+---
+
+## 全局选项
+
+所有命令均支持以下顶级选项：
+
+| 选项 | 说明 |
+|---|---|
+| `--registry <path>` | 覆盖仓库根路径（默认：`~/.skillrelay`） |
+| `--json` | 输出 JSON 而非人类可读文本 |
+| `--no-color` | 禁用 ANSI 颜色输出 |
+| `--quiet` | 屏蔽信息输出，仅显示错误 |
+| `--version` | 显示版本号 |
+| `--help` | 显示帮助信息 |
+
+---
+
+## 退出码
+
+| 代码 | 含义 |
+|---|---|
+| `0` | 成功 |
+| `1` | 通用错误或健康检查发现问题 |
+| `2` | 仓库未初始化 |
+| `3` | 技能未找到 |
+| `4` | 冲突（技能已存在于目标位置） |
+| `5` | 适配器不可用 |
+
+---
+
+## 文档
+
+| 文档 | 说明 |
+|---|---|
+| [架构设计](./docs/architecture.md) | 核心组件、数据流与设计原则 |
+| [路线图](./docs/roadmap.md) | 已完成阶段与规划中功能 |
+| [验收报告](./docs/zh-CN/acceptance.md) | 功能愿景对照表与工程质量快照 |
+| [变更日志](./CHANGELOG.md) | 版本历史 |
+| [贡献指南](./CONTRIBUTING.md) | 如何参与贡献 |
+
+---
+
+## 项目状态
+
+**SkillRelay v0.1.0 是首个可用版本。**
+
+17 条 CLI 命令、2 个 Agent 适配器（Hermes + Claude Code）、321 条测试通过、93.77% 行覆盖率。长期项目愿景已完成约 76%。
+
+完整验收记录请参阅 [docs/zh-CN/acceptance.md](./docs/zh-CN/acceptance.md)。
+
+---
+
+## 贡献
+
+欢迎参与贡献！请阅读 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解详情。
+
+## 许可证
+
+[MIT](./LICENSE)

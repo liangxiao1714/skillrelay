@@ -271,6 +271,59 @@ skillrelay source remove <source-id>
 
 ---
 
+### `skillrelay trust <skill-id> <level>`
+
+Set the trust level for a skill. Persists to `skill.safety.trust_level`.
+
+**Levels:** `trusted`, `community`, `untrusted`, `unknown`
+
+```bash
+skillrelay trust my-skill trusted
+skillrelay trust my-skill untrusted --json
+```
+
+---
+
+### `skillrelay sync <agent>`
+
+Batch export all active skills in the registry to an agent.
+
+```bash
+skillrelay sync hermes
+skillrelay sync claude --dry-run        # preview without writing
+skillrelay sync hermes --overwrite      # overwrite existing files
+skillrelay sync claude --json           # structured summary output
+```
+
+---
+
+### `skillrelay tag <skill-id>`
+
+List, add, remove, or replace tags on a skill in-place.
+
+```bash
+skillrelay tag my-skill                      # list current tags
+skillrelay tag my-skill --add typescript     # add one tag
+skillrelay tag my-skill --remove old-tag     # remove one tag
+skillrelay tag my-skill --set ts,refactor    # replace all tags
+skillrelay tag my-skill --json               # JSON output
+```
+
+---
+
+### `skillrelay convert <input> [output]`
+
+Convert a skill file between agent native formats without touching the registry.
+
+```bash
+skillrelay convert ./SKILL.md --from hermes --to claude
+skillrelay convert ./code-review.md out.md --from claude --to hermes
+skillrelay convert ./SKILL.md --from hermes --to claude --dry-run
+skillrelay convert ./SKILL.md --from hermes --to claude --json
+```
+
+---
+
 ## Global Flags
 
 All commands support these top-level flags:
@@ -303,6 +356,7 @@ All commands support these top-level flags:
 
 | Document | Description |
 |---|---|
+| [Acceptance Report](./docs/acceptance.md) | Vision-to-implementation mapping, completion %, quality metrics |
 | [Architecture](./docs/architecture.md) | Core components, data flow, and design principles |
 | [Roadmap](./docs/roadmap.md) | Planned development phases |
 | [Changelog](./CHANGELOG.md) | Version history |
@@ -314,9 +368,9 @@ All commands support these top-level flags:
 
 **SkillRelay v0.1.0 is the initial working release.**
 
-The core registry, import/export pipeline, search, doctor, config, update, and adapter system (Hermes + Claude) are implemented and tested with 259 passing tests and ≥ 86% coverage.
+17 CLI commands, 2 agent adapters (Hermes + Claude Code), 321 passing tests, 93.77% line coverage. ~76% of the long-term project vision is implemented.
 
-See [CHANGELOG.md](./CHANGELOG.md) for the full list of features.
+See [docs/acceptance.md](./docs/acceptance.md) for the full verification record and vision-to-implementation mapping.
 
 ---
 

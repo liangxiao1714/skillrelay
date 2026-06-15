@@ -85,17 +85,29 @@ All commands support: `--registry <path>`, `--json`, `--no-color`, `--quiet`, `-
 
 ---
 
-## [Unreleased] — Phase 4 & 5 additions (2026-06-14)
+## [Unreleased] — Phase 4 / 5 / 6 additions (2026-06-15)
 
-### Added
+### Added — Phase 4 (trust + sync)
 
 - **`skillrelay trust <skill-id> <level>`** — Set the trust level for a skill (`trusted`, `community`, `untrusted`, `unknown`). Persists to `skill.safety.trust_level`. Supports `--json`.
 - **`skillrelay sync <agent>`** — Batch export all active registry skills to an agent (`hermes` or `claude`). Supports `--dry-run`, `--overwrite`, `--json`. Updates `skill.yaml` adapter state per skill after export.
+
+### Added — Phase 5 (tag + convert)
+
 - **`skillrelay tag <skill-id>`** — List, add, remove, or replace skill tags without re-importing. Flags: `--add <tag>`, `--remove <tag>`, `--set <tags...>`, `--json`.
 - **`skillrelay convert <input> [output]`** — Convert a skill between Hermes and Claude native formats directly, without the registry. Required: `--from <format>`, `--to <format>`. Supports `--dry-run`, `--json`.
-- 14 new E2E tests (7 trust + 5 sync + 8 tag + 6 convert).
+
+### Added — Phase 6 (acceptance documentation)
+
+- [`docs/acceptance.md`](docs/acceptance.md) — comprehensive acceptance report mapping the 19-section project vision to shipped implementation; ≈ 76% long-term completion, 100% v0.1 acceptance.
+- [`docs/zh-CN/acceptance.md`](docs/zh-CN/acceptance.md) — Chinese mirror of the acceptance report.
+- [`docs/tasks/phase-6/README.md`](docs/tasks/phase-6/README.md) — phase-6 ticket and acceptance checklist.
+- Roadmap (en + zh-CN) re-aligned: phases 0–6 marked done; phases 7–9 listed as planned.
 
 ### Test counts
 
-- **321 tests**: 161 unit + 15 integration + 66 E2E
-- Coverage: ≥ 93%
+- **321 tests**: 161 unit + 15 integration + 145 E2E (51 test files total)
+- Coverage: 93.77% lines / 84.44% branches / 84.21% functions
+- Build: tsup ESM bundle, `bin/skillrelay` runnable
+- Lint: 0 findings on 138 files
+- Typecheck: 0 errors under `exactOptionalPropertyTypes` + `noUncheckedIndexedAccess`

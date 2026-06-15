@@ -1,10 +1,10 @@
 # SkillRelay Roadmap
 
-> **Last updated**: 2026-06-14
+> **Last updated**: 2026-06-15
 
-## Current Stage: v0.1.0 — Initial Release
+## Current Stage: v0.1.0 — Initial Release Complete
 
-SkillRelay v0.1.0 is complete. The core registry, CLI, adapters (Hermes + Claude), search, doctor, config, and update commands are all implemented and tested.
+SkillRelay v0.1.0 ships with **17 CLI commands**, **2 agent adapters** (Hermes + Claude), **321 tests**, and **~76% of the long-term project vision** delivered. See [`acceptance.md`](./acceptance.md) for the full verification record.
 
 ---
 
@@ -56,11 +56,34 @@ Goal: close coverage gaps and verify the published package.
 - [x] Unit tests for hermes/import.ts (importHermesSkill)
 - [x] Unit tests for HermesAdapter and ClaudeAdapter class manifests and capabilities
 - [x] Build verification: `pnpm build` succeeds, `node dist/cli/index.js --version` works
-- [x] Coverage ≥ 93% (threshold 80%); 295 tests: 161 unit + 15 integration + 40 E2E
+- [x] Coverage ≥ 93% (threshold 80%)
+
+## Phase 4 — Trust & Sync ✅
+
+Goal: per-skill safety annotations and bulk export.
+
+- [x] `skillrelay trust <skill> <level>` — set `safety.trust_level` (`trusted | community | untrusted | unknown`)
+- [x] `skillrelay sync <agent>` — batch export all active skills to one adapter, with `--dry-run`, `--overwrite`, `--json`
+
+## Phase 5 — Tag & Convert ✅
+
+Goal: in-place metadata edits and registry-independent format conversion.
+
+- [x] `skillrelay tag <skill>` — list / `--add` / `--remove` / `--set` tags
+- [x] `skillrelay convert --from <fmt> --to <fmt>` — Hermes ↔ Claude conversion without the registry
+
+## Phase 6 — Acceptance Documentation ✅
+
+Goal: produce a comprehensive verification record mapping the project vision to shipped implementation.
+
+- [x] [`docs/acceptance.md`](./acceptance.md) — English acceptance report with 19-section vision mapping
+- [x] [`docs/zh-CN/acceptance.md`](./zh-CN/acceptance.md) — Chinese mirror
+- [x] Engineering metrics: 321 tests, 93.77% coverage, 0 lint findings, 0 type errors, build green
+- [x] v0.1 acceptance criteria from `v0.1-scope.md §6` all individually mapped to E2E tests
 
 ---
 
-## Phase 4 — Multi-Source Discovery (Planned)
+## Phase 7 — Multi-Source Discovery (Planned)
 
 Goal: connect the registry to external skill sources.
 
@@ -69,26 +92,24 @@ Goal: connect the registry to external skill sources.
 - [ ] Source-level search federation (search across multiple registered sources)
 - [ ] SkillHub source integration (if SkillHub API is available)
 
-## Phase 5 — Conversion & Validation (Planned)
-
-Goal: cross-agent skill compatibility.
-
-- [ ] Format conversion between agent-specific formats (e.g. Hermes → Claude)
-- [ ] Cross-agent compatibility validation
-- [ ] Trust and safety checks — source credibility and risk flags
-- [ ] Dependency checking
-
-## Phase 6 — Publish & Ecosystem (Planned)
+## Phase 8 — Publish & Ecosystem (Planned)
 
 Goal: bidirectional skill flow and open ecosystem.
 
 - [ ] `skillrelay publish <skill>` — prepare a skill artifact or publish to a configured external source
-- [ ] Version tracking and changelog per skill
+- [ ] Version tracking and per-skill changelog history
 - [ ] Conflict resolution — same-name, multi-version, multi-source
-- [ ] Community adapter contributions
+- [ ] Automatic risk-script scanning to complement manual `trust` annotations
+- [ ] Community RFC process for skill spec evolution
+
+## Phase 9 — Additional Adapters (Planned)
+
+Goal: broaden agent coverage.
+
 - [ ] OpenClaw adapter
 - [ ] OpenCode adapter
 - [ ] Codex adapter
+- [ ] Dynamic `@skillrelay/adapter-*` discovery (resolves Q-0005)
 
 ## Out of Scope (for now)
 
