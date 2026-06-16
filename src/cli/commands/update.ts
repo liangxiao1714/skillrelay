@@ -3,6 +3,8 @@ import { buildSkillRecord } from "../../core/import/build-record.js";
 import { detectSourceType } from "../../core/import/detect.js";
 import { parseSkillDir } from "../../core/import/parse-dir.js";
 import { parseSkillMd } from "../../core/import/parse-skill-md.js";
+import { parseGithubUri } from "../../core/import/sources/github.js";
+import { parseSkillUrl } from "../../core/import/sources/url.js";
 import { readSkill, skillContentPath, updateSkill } from "../../core/registry/index.js";
 import type { SkillId } from "../../core/schema/index.js";
 import { atomicWriteFile } from "../../util/fs.js";
@@ -24,14 +26,30 @@ export default function updateCommand(): Command {
         // Detect source type from original URI
         let parsed: Awaited<ReturnType<typeof parseSkillMd>>;
         let detected: Awaited<ReturnType<typeof detectSourceType>>;
+        let resolvedUri: string;
 
         try {
           detected = await detectSourceType(sourceUri);
+
           if (detected.type === "local_file") {
-            parsed = await parseSkillMd(detected.absolutePath);
-          } else {
-            const dirResult = await parseSkillDir(detected.absolutePath);
+            const path = detected.absolutePath as string;
+            parsed = await parseSkillMd(path);
+            resolvedUri = path;
+          } else if (detected.type === "local_dir") {
+            const path = detected.absolutePath as string;
+            const dirResult = await parseSkillDir(path);
             parsed = dirResult.parsed;
+            resolvedUri = path;
+          } else if (detected.type === "github") {
+            const uri = detected.uri as string;
+            const ref = parseGithubUri(uri);
+            parsed = await parseSkillUrl(ref.rawUrl);
+            resolvedUri = ref.rawUrl;
+          } else {
+            // url
+            const uri = detected.uri as string;
+            parsed = await parseSkillUrl(uri);
+            resolvedUri = uri;
           }
         } catch (e) {
           err(`Cannot read source: ${sourceUri}`);
@@ -43,7 +61,7 @@ export default function updateCommand(): Command {
         // Re-build record from source (preserves skill ID)
         const buildOpts: Parameters<typeof buildSkillRecord>[1] = {
           sourceType: detected.type,
-          sourceUri: detected.absolutePath,
+          sourceUri: resolvedUri,
         };
         const { skill: freshSkill, contentMd: freshContent } = buildSkillRecord(parsed, buildOpts);
 

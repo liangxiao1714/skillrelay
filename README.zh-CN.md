@@ -110,12 +110,17 @@ skillrelay --registry ./my-reg init   # 指定自定义路径
 
 ### `skillrelay import <path>`
 
-从本地文件、目录或 Hermes 导入技能到仓库。
+从本地文件、目录、远程 URL、GitHub 或 Hermes 导入技能到仓库。
 
 ```bash
 skillrelay import ./skill.md          # 从 SKILL.md 文件导入
 skillrelay import ./my-skill-dir/     # 从包含 SKILL.md 的目录导入
 skillrelay import hermes:code-review  # 从已安装的 Hermes 技能拉取
+
+# 远程来源（Phase 7）
+skillrelay import https://example.com/skill.md       # 原始 URL
+skillrelay import github:owner/repo/path/skill.md    # GitHub（默认 main 分支）
+skillrelay import github:owner/repo/skill.md@v1.2.0  # GitHub 指定标签/分支/SHA
 
 # 选项
 skillrelay import ./skill.md --dry-run          # 解析但不写入
@@ -377,7 +382,7 @@ skillrelay convert ./skill.md --from hermes --to claude --json
 
 **SkillRelay v0.1.0 是首个可用版本。**
 
-17 条 CLI 命令、2 个 Agent 适配器（Hermes + Claude Code）、321 条测试通过、93.77% 行覆盖率。长期项目愿景已完成约 76%。
+17 条 CLI 命令、2 个 Agent 适配器（Hermes + Claude Code）、357 条测试通过、93.97% 行覆盖率。Phase 7 已完成 URL 与 GitHub 来源导入。长期项目愿景已完成约 79%。
 
 完整验收记录请参阅 [docs/zh-CN/acceptance.md](./docs/zh-CN/acceptance.md)。
 

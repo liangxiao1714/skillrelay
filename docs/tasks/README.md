@@ -138,7 +138,7 @@ This invariant is enforced by reviewer discipline (and, later, by CI checks once
 | 4 | trust + sync commands | [phase-4/README.md](./phase-4/README.md) | done |
 | 5 | tag + convert commands | [phase-5/README.md](./phase-5/README.md) | done |
 | 6 | Acceptance documentation | [phase-6/README.md](./phase-6/README.md) | done |
-| 7 | Multi-source discovery (GitHub / SkillHub federation) | (planned) | todo |
+| 7 | Multi-source discovery (URL + GitHub import) | [phase-7/README.md](./phase-7/README.md) | done |
 | 8 | Publish, version history, community ecosystem | (planned) | todo |
 | 9 | Additional adapters (OpenClaw, OpenCode, Codex) | (planned) | todo |
 

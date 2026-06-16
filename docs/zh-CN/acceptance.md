@@ -1,12 +1,12 @@
 # SkillRelay 项目验收报告
 
-> **快照日期**：2026-06-15
-> **版本**：0.1.0（Phase 0 → Phase 5 已完成）
+> **快照日期**：2026-06-16
+> **版本**：0.1.0（Phase 0 → Phase 7 已完成）
 > **状态**：v0.1 完整交付；长期路线图持续推进
 
 本文是 SkillRelay 的权威验收记录，将 [`design-discussion.md`](../design-discussion.md) 中描述的**完整项目愿景**对照**已实现的代码**逐项核验，并给出当前总完成度。
 
-如需 30 秒概览：**17 条 CLI 命令**、**2 个 Agent 适配器**、**321 条测试**（161 单测 + 15 集成 + 145 E2E）、**93.77% 行覆盖率**，[`v0.1-scope.md §6`](../v0.1-scope.md) 中定义的全部 8 条 v0.1 验收标准**均已满足**，长期项目愿景已实现约 **76%**。
+如需 30 秒概览：**17 条 CLI 命令**、**2 个 Agent 适配器**、**357 条测试**（166 单测 + 16 集成 + 175 E2E）、**93.97% 行覆盖率**，[`v0.1-scope.md §6`](../v0.1-scope.md) 中定义的全部 8 条 v0.1 验收标准**均已满足**，长期项目愿景已实现约 **76%**。
 
 ---
 
@@ -41,7 +41,7 @@
 | 5.2 | 技能来源管理 | ✅ | `source add/list/remove/enable/disable`、`src/core/source/*`、`sources.yaml` |
 | 5.3 | 技能搜索与发现 | 🟡 | 本地搜索 `search`（名称/标签/分类/作者/摘要打分）；外部源联邦搜索延后 |
 | 5.4 | 技能详情查看 | ✅ | `info`、`status`（仓库 + 各适配器同步状态） |
-| 5.5 | 技能安装与导入 | ✅ | `import <path>`、`import hermes:<name>`，通过适配器 `discover()` 拉取 |
+| 5.5 | 技能安装与导入 | ✅ | `import <path>`、`import hermes:<name>`、`import https://…`、`import github:<owner>/<repo>/<path>[@ref]`；通过适配器 `discover()` 拉取 |
 | 5.6 | 技能导出与分发 | ✅ | `export <skill> hermes`、`export <skill> claude`，支持 `--target / --dry-run / --overwrite` |
 | 5.7 | 多 Agent 适配 | 🟡 | Hermes ✅，Claude ✅；OpenClaw / OpenCode / Codex 延后到 Phase 9 |
 | 5.8 | 技能拉取与推送 | ✅ | `import hermes:<name>`（拉）、`export`（推）、`sync`（批量推） |
@@ -104,15 +104,15 @@
 
 | 指标 | 数值 | 备注 |
 |---|---|---|
-| 总测试数 | **321** | 51 个测试文件 |
-| 单元测试 | 161（31 文件） | 覆盖 core/* 与 adapter |
-| 集成测试 | 15（4 文件） | 仓库 round-trip、import/export/search 流程 |
-| E2E 测试 | 145（16 文件） | 每条 CLI 都以真实子进程方式运行 |
-| 行覆盖率 | **93.77%** | 阈值 80%，`src/cli/**` 已排除（仅子进程运行） |
-| 分支覆盖率 | 84.44% | 阈值 80% |
-| 函数覆盖率 | 84.21% | 阈值 80% |
+| 总测试数 | **357** | 56 个测试文件 |
+| 单元测试 | 166（34 文件） | 覆盖 core/* 与 adapter |
+| 集成测试 | 16（5 文件） | 仓库 round-trip、import/export/search/url 流程 |
+| E2E 测试 | 175（17 文件） | 每条 CLI 都以真实子进程方式运行 |
+| 行覆盖率 | **93.97%** | 阈值 80%，`src/cli/**` 已排除（仅子进程运行） |
+| 分支覆盖率 | 85.83% | 阈值 80% |
+| 函数覆盖率 | 84.61% | 阈值 80% |
 | 构建 | tsup → ESM bundle | `dist/cli/index.js` 可作为 `bin/skillrelay` 直接运行 |
-| Lint | Biome | 138 个文件，0 报错 |
+| Lint | Biome | 141 个文件，0 报错 |
 | Typecheck | `tsc --noEmit` strict | 0 错误；启用 `exactOptionalPropertyTypes` + `noUncheckedIndexedAccess` |
 
 复现命令：
@@ -133,7 +133,7 @@ node dist/cli/index.js --help
 
 | 约束 | 来源 | 验证 |
 |---|---|---|
-| 本地优先，无云端 / GUI | `v0.1-scope.md §2` | ✅ 无网络代码、无 UI |
+| 本地优先，无云端 / GUI | `v0.1-scope.md §2` | ✅ 无云端；`import https://` / `github:` 使用 Node 内置 `fetch` 按需发起（用户主动触发） |
 | 每台机器一个中心仓库 | `architecture.md` 原则 1 | ✅ `--registry` 根目录 |
 | 适配器与仓库核心隔离 | `architecture.md` 原则 3 | ✅ `src/adapters/**` 不直接 import `src/core/registry/`（由 CLI 居中） |
 | 双向技能流 | `architecture.md` 原则 4 | ✅ `import hermes:` 反向，`export / sync` 正向 |
@@ -155,7 +155,7 @@ node dist/cli/index.js --help
 | 4 | trust + sync 命令 | ✅ 完成 |
 | 5 | tag + convert 命令 | ✅ 完成 |
 | 6 | 验收文档（本文） | ✅ 完成 |
-| 7 | 多源发现（GitHub / SkillHub 联邦） | ⛔ 计划中 |
+| 7 | 多源发现（URL + GitHub 导入） | ✅ 完成 |
 | 8 | publish、版本历史、社区生态 | ⛔ 计划中 |
 | 9 | 更多适配器（OpenClaw、OpenCode、Codex） | ⛔ 计划中 |
 
@@ -165,7 +165,7 @@ node dist/cli/index.js --help
 
 以下属于明确的范围裁剪，非缺陷。
 
-1. **无外部源联邦搜索** —— `search` 仅作用于本地仓库；从 GitHub URL 导入需要 `git clone` + `import <path>` 两步。
+1. **无外部源联邦搜索** —— `search` 仅作用于本地仓库。现已支持 `import github:<owner>/<repo>/<path>` 和 `import https://…` 单文件导入；跨注册源的联邦搜索延后实现。
 2. **无 `publish` 命令** —— 愿景 § 5.19 尚未实现，技能能导出到 Agent，但还无法回推到外部源。
 3. **无自动风险脚本扫描** —— `trust` 仍是手工标注；尚未对 skill 内容做危险 shell 调用检测。
 4. **无多版本并存存储** —— 同 ID 重复导入会拒绝；尚未在同一逻辑身份下保留版本历史。

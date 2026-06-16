@@ -2,21 +2,37 @@ import { stat } from "node:fs/promises";
 import { resolve } from "node:path";
 import { SourceError } from "../errors/index.js";
 
-export type SourceType = "local_file" | "local_dir";
+export type SourceType = "local_file" | "local_dir" | "url" | "github";
 
 export interface DetectResult {
   type: SourceType;
-  absolutePath: string;
+  /** Absolute filesystem path (local_file / local_dir only). */
+  absolutePath?: string;
+  /** Original input string (url / github). */
+  uri?: string;
 }
 
 /**
- * Given a path string, determine whether it points to a local file or directory.
- * Resolves the path absolutely.
+ * Given an input string, determine the source type:
+ * - `github:<owner>/<repo>/<path>[@ref]` → "github"
+ * - `https://...` or `http://...` → "url"
+ * - anything else → resolved as a local filesystem path ("local_file" or "local_dir")
  *
- * @throws `SourceError` if the path does not exist or cannot be accessed.
+ * @throws `SourceError` if the path does not exist or cannot be accessed (local only).
  */
-export async function detectSourceType(inputPath: string): Promise<DetectResult> {
-  const absolutePath = resolve(inputPath);
+export async function detectSourceType(input: string): Promise<DetectResult> {
+  // Remote: github: prefix
+  if (input.startsWith("github:")) {
+    return { type: "github", uri: input };
+  }
+
+  // Remote: HTTP(S) URL
+  if (input.startsWith("https://") || input.startsWith("http://")) {
+    return { type: "url", uri: input };
+  }
+
+  // Local filesystem path
+  const absolutePath = resolve(input);
 
   let s: Awaited<ReturnType<typeof stat>>;
   try {

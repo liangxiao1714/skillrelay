@@ -20,7 +20,10 @@ const KNOWN_FRONTMATTER_KEYS = new Set([
 ]);
 
 function originTypeFromSourceType(sourceType: SourceType): OriginType {
-  return sourceType === "local_file" ? "local_file" : "local_dir";
+  if (sourceType === "local_file") return "local_file";
+  if (sourceType === "local_dir") return "local_dir";
+  if (sourceType === "github") return "git";
+  return "url";
 }
 
 function extractString(value: unknown): string | undefined {

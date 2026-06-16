@@ -1,10 +1,10 @@
 # SkillRelay 开发路线图
 
-> **最后更新**：2026-06-15
+> **最后更新**：2026-06-16
 
-## 当前阶段：v0.1.0 初始版本完成
+## 当前阶段：Phase 7 完成 — 多源发现已上线
 
-SkillRelay v0.1.0 已交付 **17 条 CLI 命令**、**2 个 Agent 适配器**（Hermes + Claude）、**321 条测试**，长期项目愿景已实现 **约 76%**。完整验收记录见 [`acceptance.md`](./acceptance.md)。
+SkillRelay v0.1.0 已交付 **17 条 CLI 命令**、**2 个 Agent 适配器**（Hermes + Claude）、**357 条测试**，长期项目愿景已实现 **约 79%**。完整验收记录见 [`acceptance.md`](./acceptance.md)。
 
 ---
 
@@ -81,14 +81,18 @@ SkillRelay v0.1.0 已交付 **17 条 CLI 命令**、**2 个 Agent 适配器**（
 
 ---
 
-## Phase 7 —— 多源发现（计划中）
+## Phase 7 —— 多源发现 ✅
 
 目标：把仓库连接到外部技能源。
 
-- [ ] GitHub 仓库来源（`git clone` 或 raw URL 导入）
-- [ ] 本地目录来源注册与监听
-- [ ] 多源联邦搜索
-- [ ] SkillHub 来源接入
+- [x] `skillrelay import https://…` —— 从任意 HTTP/HTTPS URL 导入
+- [x] `skillrelay import github:<owner>/<repo>/<path>[@ref]` —— 从 GitHub 导入（自动解析为 raw.githubusercontent.com）
+- [x] `fetchText(url)` —— 基于 Node 18+ 内置 fetch 的封装，带 content-type 与大小保护
+- [x] `resolveGithubUri` —— 解析 `github:` 协议，支持 `@ref` 指定分支/标签/SHA
+- [x] `update` 命令支持对 `url` / `github` 来源类型重新拉取
+- [ ] 本地目录来源注册与监听（延后至 Phase 7b）
+- [ ] 多源联邦搜索（延后）
+- [ ] SkillHub 来源接入（延后）
 
 ## Phase 8 —— 发布与生态（计划中）
 

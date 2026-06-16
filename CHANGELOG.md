@@ -104,10 +104,21 @@ All commands support: `--registry <path>`, `--json`, `--no-color`, `--quiet`, `-
 - [`docs/tasks/phase-6/README.md`](docs/tasks/phase-6/README.md) — phase-6 ticket and acceptance checklist.
 - Roadmap (en + zh-CN) re-aligned: phases 0–6 marked done; phases 7–9 listed as planned.
 
+### Added — Phase 7 (multi-source discovery — URL + GitHub import)
+
+- **`skillrelay import https://…`** — Import a skill directly from any raw HTTP/HTTPS URL. The fetcher validates content-type, enforces a 1 MB body limit, and parses standard YAML front-matter.
+- **`skillrelay import github:<owner>/<repo>/<path>[@ref]`** — Import a skill from a GitHub repository. The URI is resolved to a `raw.githubusercontent.com` URL; an optional `@ref` segment selects a branch, tag, or SHA (defaults to `main`).
+- Extended `detectSourceType` to recognize `https?://` and `github:` URI schemes without touching the filesystem.
+- New `src/core/import/fetch.ts` — `fetchText(url)` helper using Node 18+ built-in `fetch`.
+- New `src/core/import/sources/github.ts` — `resolveGithubUri(uri)` + `parseGithubSkill(uri)`.
+- New `src/core/import/sources/url.ts` — `parseSkillUrl(url)`.
+- Extended `build-record.ts` `SourceType` to include `"url"` and `"github"` (already in `OriginTypeSchema`).
+- Extended `update` command to re-fetch skills whose `origin.type` is `"url"` or `"github"`.
+
 ### Test counts
 
-- **321 tests**: 161 unit + 15 integration + 145 E2E (51 test files total)
-- Coverage: 93.77% lines / 84.44% branches / 84.21% functions
+- **357 tests**: 175 unit + 17 integration + 165 E2E (56 test files total)
+- Coverage: 93.97% lines / 85.83% branches / 84.61% functions
 - Build: tsup ESM bundle, `bin/skillrelay` runnable
-- Lint: 0 findings on 138 files
+- Lint: 0 findings on 141 files
 - Typecheck: 0 errors under `exactOptionalPropertyTypes` + `noUncheckedIndexedAccess`

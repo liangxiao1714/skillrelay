@@ -64,8 +64,13 @@ void nowIso;
 
 export default function importCommand(): Command {
   return new Command("import")
-    .description("Import a skill from a local file, directory, or agent (e.g. hermes:<name>)")
-    .argument("<path>", "Path to SKILL.md, skill directory, or hermes:<name>")
+    .description(
+      "Import a skill from a local file, directory, URL, GitHub, or agent (e.g. hermes:<name>)",
+    )
+    .argument(
+      "<path>",
+      "Path to SKILL.md, skill directory, https:// URL, github:<owner>/<repo>/<path>[@ref], or hermes:<name>",
+    )
     .option("--name <name>", "Override the detected skill name")
     .option("--dry-run", "Parse and validate without writing to registry")
     .action(

@@ -36,6 +36,26 @@ describe("detectSourceType", () => {
   it("throws SourceError for non-existent path", async () => {
     await expect(detectSourceType("/nonexistent/path/SKILL.md")).rejects.toThrow(SourceError);
   });
+
+  it("detects https:// URL as 'url' type without filesystem access", async () => {
+    const result = await detectSourceType("https://example.com/skill.md");
+    expect(result.type).toBe("url");
+    expect(result.uri).toBe("https://example.com/skill.md");
+    expect(result.absolutePath).toBeUndefined();
+  });
+
+  it("detects http:// URL as 'url' type", async () => {
+    const result = await detectSourceType("http://localhost:8080/skill.md");
+    expect(result.type).toBe("url");
+    expect(result.uri).toBe("http://localhost:8080/skill.md");
+  });
+
+  it("detects github: prefix as 'github' type without filesystem access", async () => {
+    const result = await detectSourceType("github:acme/skills/review.md");
+    expect(result.type).toBe("github");
+    expect(result.uri).toBe("github:acme/skills/review.md");
+    expect(result.absolutePath).toBeUndefined();
+  });
 });
 
 describe("parseSkillMd", () => {

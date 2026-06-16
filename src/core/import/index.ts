@@ -5,6 +5,8 @@ import { buildSkillRecord } from "./build-record.js";
 import { detectSourceType } from "./detect.js";
 import { parseSkillDir } from "./parse-dir.js";
 import { parseSkillMd } from "./parse-skill-md.js";
+import { parseGithubUri } from "./sources/github.js";
+import { parseSkillUrl } from "./sources/url.js";
 
 export interface ImportSkillOptions {
   /** Override the detected skill name. */
@@ -22,12 +24,19 @@ export type ImportSkillOutcome =
   | { kind: "conflict"; existingId: string; error: SkillConflictError };
 
 /**
- * Import a skill from a local file or directory into the registry at `registryRoot`.
+ * Import a skill from a local file, directory, HTTPS URL, or `github:` shorthand into
+ * the registry at `registryRoot`.
  *
  * Detects source type, parses skill metadata and content, builds a canonical record,
  * and writes it to the registry.
  *
- * @throws `SourceError` if the source cannot be parsed.
+ * Supported input forms:
+ *   - `/path/to/SKILL.md`                         → local file
+ *   - `/path/to/skill-dir/`                        → local directory (must contain SKILL.md)
+ *   - `https://example.com/skill.md`               → remote URL (raw Markdown)
+ *   - `github:<owner>/<repo>/<path>[@ref]`         → GitHub raw file (resolved to raw URL)
+ *
+ * @throws `SourceError` if the source cannot be fetched or parsed.
  * @throws `RegistryNotInitializedError` if the registry has not been initialized.
  */
 export async function importSkill(
@@ -40,24 +49,34 @@ export async function importSkill(
 
   // 2. Parse source.
   let parsed: Awaited<ReturnType<typeof parseSkillMd>>;
-  let entryFilePath: string;
+  let sourceUri: string;
 
   if (detected.type === "local_file") {
-    parsed = await parseSkillMd(detected.absolutePath);
-    entryFilePath = detected.absolutePath;
-  } else {
-    const dirResult = await parseSkillDir(detected.absolutePath);
+    const path = detected.absolutePath as string;
+    parsed = await parseSkillMd(path);
+    sourceUri = path;
+  } else if (detected.type === "local_dir") {
+    const path = detected.absolutePath as string;
+    const dirResult = await parseSkillDir(path);
     parsed = dirResult.parsed;
-    entryFilePath = dirResult.entryFilePath;
+    sourceUri = path;
+  } else if (detected.type === "github") {
+    const uri = detected.uri as string;
+    const ref = parseGithubUri(uri);
+    parsed = await parseSkillUrl(ref.rawUrl);
+    // Store the canonical raw URL as the source URI so the skill can be re-fetched.
+    sourceUri = ref.rawUrl;
+  } else {
+    // type === "url"
+    const uri = detected.uri as string;
+    parsed = await parseSkillUrl(uri);
+    sourceUri = uri;
   }
-  // entryFilePath is tracked but currently used only for original file copy;
-  // retained for future use in diagnostics.
-  void entryFilePath;
 
   // 3. Build canonical record.
   const buildOptions: Parameters<typeof buildSkillRecord>[1] = {
     sourceType: detected.type,
-    sourceUri: detected.absolutePath,
+    sourceUri,
   };
   if (options.overrideName !== undefined) {
     buildOptions.overrideName = options.overrideName;
@@ -72,8 +91,7 @@ export async function importSkill(
   // 5. Write to registry.
   try {
     await writeSkill(registryRoot, skill, contentMd, {
-      originalSourcePath:
-        detected.type === "local_dir" ? detected.absolutePath : detected.absolutePath,
+      originalSourcePath: sourceUri,
     });
   } catch (err) {
     const { SkillConflictError: ConflictError } = await import("../errors/index.js");
@@ -90,3 +108,6 @@ export { detectSourceType } from "./detect.js";
 export { parseSkillMd } from "./parse-skill-md.js";
 export { parseSkillDir } from "./parse-dir.js";
 export { buildSkillRecord } from "./build-record.js";
+export { parseGithubUri } from "./sources/github.js";
+export { parseSkillUrl } from "./sources/url.js";
+export { fetchText } from "./fetch.js";

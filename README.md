@@ -110,12 +110,17 @@ skillrelay --registry ./my-reg init   # custom location
 
 ### `skillrelay import <path>`
 
-Import a skill into the registry from a local file, directory, or Hermes.
+Import a skill into the registry from a local file, directory, remote URL, GitHub, or Hermes.
 
 ```bash
 skillrelay import ./skill.md          # from a SKILL.md file
 skillrelay import ./my-skill-dir/     # from a directory containing SKILL.md
 skillrelay import hermes:code-review  # pull from a locally installed Hermes skill
+
+# Remote sources (Phase 7)
+skillrelay import https://example.com/skill.md       # raw URL
+skillrelay import github:owner/repo/path/skill.md    # GitHub (defaults to main branch)
+skillrelay import github:owner/repo/skill.md@v1.2.0  # GitHub at specific tag/branch/SHA
 
 # Flags
 skillrelay import ./skill.md --dry-run          # parse without writing
@@ -368,7 +373,7 @@ All commands support these top-level flags:
 
 **SkillRelay v0.1.0 is the initial working release.**
 
-17 CLI commands, 2 agent adapters (Hermes + Claude Code), 321 passing tests, 93.77% line coverage. ~76% of the long-term project vision is implemented.
+17 CLI commands, 2 agent adapters (Hermes + Claude Code), 357 passing tests, 93.97% line coverage. ~76% of the long-term project vision is implemented.
 
 See [docs/acceptance.md](./docs/acceptance.md) for the full verification record and vision-to-implementation mapping.
 
@@ -381,65 +386,3 @@ Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) to g
 ## License
 
 [MIT](./LICENSE)
-
----
-
-### `skillrelay trust <skill-id> <level>`
-
-Set the trust level for a skill in the registry.
-
-**Levels:** `trusted`, `community`, `untrusted`, `unknown`
-
-```bash
-skillrelay trust my-skill-a1b2c3d4e5 trusted
-skillrelay trust my-skill community
-skillrelay trust my-skill untrusted --json
-```
-
----
-
-### `skillrelay sync <agent>`
-
-Export all active skills from the registry to an agent in one command.
-
-**Supported agents:** `hermes`, `claude`
-
-```bash
-skillrelay sync hermes                  # export all active skills to Hermes
-skillrelay sync claude                  # export all active skills to Claude Code
-skillrelay sync hermes --dry-run        # preview without writing
-skillrelay sync hermes --overwrite      # overwrite existing
-skillrelay sync claude --json           # JSON output with per-skill results
-```
-
----
-
-### `skillrelay tag <skill-id>`
-
-List, add, remove, or replace tags on a skill without re-importing.
-
-```bash
-skillrelay tag my-skill                          # list current tags
-skillrelay tag my-skill --add typescript         # add a tag
-skillrelay tag my-skill --remove testing         # remove a tag
-skillrelay tag my-skill --set alpha beta gamma   # replace all tags
-skillrelay tag my-skill --json                   # JSON output
-```
-
----
-
-### `skillrelay convert <input> [output]`
-
-Convert a skill between agent native formats without the registry.
-
-```bash
-# Hermes SKILL.md → Claude command format
-skillrelay convert ./skill.md --from hermes --to claude
-
-# Claude command → Hermes SKILL.md format
-skillrelay convert ./command.md --from claude --to hermes
-
-# Specify output path and use dry-run
-skillrelay convert ./skill.md ./converted.md --from hermes --to claude --dry-run
-skillrelay convert ./skill.md --from hermes --to claude --json
-```

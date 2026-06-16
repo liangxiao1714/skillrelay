@@ -1,12 +1,12 @@
 # SkillRelay Acceptance Report
 
-> **Snapshot date**: 2026-06-15
-> **Version**: 0.1.0 (Phase 0 → Phase 5 complete)
+> **Snapshot date**: 2026-06-16
+> **Version**: 0.1.0 (Phase 0 → Phase 7 complete)
 > **Status**: v0.1 fully delivered; long-term roadmap in progress
 
 This document is the authoritative acceptance record for SkillRelay. It maps the **full project vision** captured in [`design-discussion.md`](./design-discussion.md) to the **shipped implementation** and reports the overall completion percentage.
 
-If you only need a 30-second summary: **17 CLI commands**, **2 agent adapters**, **321 tests** (161 unit + 15 integration + 145 E2E aggregate runs), **93.77% line coverage**, the v0.1 acceptance criteria from [`v0.1-scope.md §6`](./v0.1-scope.md) are **all satisfied**, and roughly **75% of the long-term project vision** is implemented or partially implemented.
+If you only need a 30-second summary: **17 CLI commands**, **2 agent adapters**, **357 tests** (166 unit + 16 integration + 175 E2E aggregate runs), **93.97% line coverage**, the v0.1 acceptance criteria from [`v0.1-scope.md §6`](./v0.1-scope.md) are **all satisfied**, and roughly **76% of the long-term project vision** is implemented or partially implemented.
 
 ---
 
@@ -41,7 +41,7 @@ Legend: ✅ done · 🟡 partial · ⛔ not started
 | 5.2 | 技能来源管理 / Source management | ✅ | `source add/list/remove/enable/disable`, `src/core/source/*`, `sources.yaml` |
 | 5.3 | 技能搜索与发现 / Search & discovery | 🟡 | Local search via `search` (name/tag/category/author/summary scoring); external source federation deferred |
 | 5.4 | 技能详情查看 / Skill detail view | ✅ | `info`, `status` (registry + per-adapter sync state) |
-| 5.5 | 技能安装与导入 / Install & import | ✅ | `import <path>`, `import hermes:<name>`, agent-source pull via adapter `discover()` |
+| 5.5 | 技能安装与导入 / Install & import | ✅ | `import <path>`, `import hermes:<name>`, `import https://…`, `import github:<owner>/<repo>/<path>[@ref]`; agent-source pull via adapter `discover()` |
 | 5.6 | 技能导出与分发 / Export & distribute | ✅ | `export <skill> hermes`, `export <skill> claude`, `--target`, `--dry-run`, `--overwrite` |
 | 5.7 | 多 Agent 适配 / Multi-agent adapter | 🟡 | Hermes ✅, Claude ✅; OpenClaw / OpenCode / Codex deferred to Phase 7+ |
 | 5.8 | 技能拉取与推送 / Pull & push | ✅ | `import hermes:<name>` (pull), `export` (push), `sync` (batch push) |
@@ -55,7 +55,7 @@ Legend: ✅ done · 🟡 partial · ⛔ not started
 | 5.16 | 项目配置管理 / Config management | ✅ | `config get/set/unset`, Zod-validated keys (`default_registry`, `default_adapter`, `color`, `log_level`) |
 | 5.17 | 可扩展的适配器与来源机制 / Extensibility | 🟡 | `Adapter` interface + static registration done; dynamic `@skillrelay/adapter-*` discovery deferred (Q-0005) |
 | 5.18 | 开放式生态能力 / Open ecosystem | 🟡 | MIT license, public repo, contributing guide; formal community RFC process deferred |
-| 5.19 | 技能发布与共享 / Publish & share | ⛔ | `publish` command not yet implemented; planned for Phase 7 |
+| 5.19 | 技能发布与共享 / Publish & share | ⛔ | `publish` command not yet implemented; planned for Phase 8 |
 
 ### Completion percentage
 
@@ -81,7 +81,7 @@ total   :          14.5 / 19 = 76.3%
 | `init` | 0 | Create the local registry |
 | `list` | 1 | List skills (table / `--json`) |
 | `info` | 1 | Show full skill metadata |
-| `import <path \| hermes:name>` | 1 | Import from local file/dir or pull from Hermes |
+| `import <path \| hermes:name \| https://… \| github:…>` | 1 / 7 | Import from local file/dir, Hermes, raw URL, or GitHub |
 | `status` | 1 | Show registry + per-adapter sync state |
 | `validate` | 1 | Validate one skill against schema rules |
 | `remove` | 1 | Soft-delete a skill |
@@ -104,15 +104,15 @@ Global flags supported on every command: `--registry`, `--json`, `--no-color`, `
 
 | Metric | Value | Notes |
 |---|---|---|
-| Total tests | **321** | 51 test files |
-| Unit tests | 161 (31 files) | core/* and adapter unit coverage |
-| Integration tests | 15 (4 files) | registry round-trip, import/export/search flows |
-| E2E tests | 145 (16 files) | each CLI command exercised as a real subprocess |
-| Line coverage | **93.77%** | threshold 80%; `src/cli/**` excluded (subprocess-only) |
-| Branch coverage | 84.44% | threshold 80% |
-| Function coverage | 84.21% | threshold 80% |
+| Total tests | **357** | 56 test files |
+| Unit tests | 166 (34 files) | core/* and adapter unit coverage |
+| Integration tests | 16 (5 files) | registry round-trip, import/export/search/URL flows |
+| E2E tests | 175 (17 files) | each CLI command exercised as a real subprocess |
+| Line coverage | **93.97%** | threshold 80%; `src/cli/**` excluded (subprocess-only) |
+| Branch coverage | 85.83% | threshold 80% |
+| Function coverage | 84.61% | threshold 80% |
 | Build | tsup → ESM bundle | `dist/cli/index.js` runnable as `bin/skillrelay` |
-| Lint | Biome | 0 findings on 138 files |
+| Lint | Biome | 0 findings on 141 files |
 | Typecheck | `tsc --noEmit` strict | 0 errors; `exactOptionalPropertyTypes` + `noUncheckedIndexedAccess` enabled |
 
 Reproduction:
@@ -135,7 +135,7 @@ The implementation respects every architectural constraint declared in the desig
 
 | Constraint | Source | Verified |
 |---|---|---|
-| Local-first, no cloud / GUI | `v0.1-scope.md §2` | ✅ no network code, no UI |
+| Local-first, no cloud / GUI | `v0.1-scope.md §2` | ✅ no cloud; HTTP fetch for `import https://` / `github:` uses Node built-in `fetch` (user-initiated only) |
 | One central registry per machine | `architecture.md` Principle 1 | ✅ filesystem registry under `--registry` root |
 | Adapter isolation from registry core | `architecture.md` Principle 3 | ✅ `src/adapters/**` cannot import `src/core/registry/` directly (CLI mediates) |
 | Bidirectional skill flow | `architecture.md` Principle 4 | ✅ `import hermes:` (agent → registry), `export` / `sync` (registry → agent) |
@@ -157,7 +157,7 @@ The implementation respects every architectural constraint declared in the desig
 | 4 | Trust + sync commands | ✅ done |
 | 5 | Tag + convert commands | ✅ done |
 | 6 | Acceptance documentation (this doc) | ✅ done |
-| 7 | Multi-source discovery (GitHub / SkillHub federation) | ⛔ planned |
+| 7 | Multi-source discovery (URL + GitHub import) | ✅ done |
 | 8 | Publish, version history, community ecosystem | ⛔ planned |
 | 9 | Additional adapters (OpenClaw, OpenCode, Codex) | ⛔ planned |
 
@@ -167,7 +167,7 @@ The implementation respects every architectural constraint declared in the desig
 
 These are deliberate scope cuts, not bugs.
 
-1. **No external source federation** — `search` operates only on the local registry. Importing from a GitHub URL requires `git clone` + `import <path>` two-step today.
+1. **No external source federation** — `search` operates only on the local registry. Direct `import github:<owner>/<repo>/<path>` and `import https://…` now work for single-file import; recursive repo crawling and federated search across registered sources are deferred.
 2. **No `publish` command** — § 5.19 of the vision is unimplemented. Skills can be exported to agents but not pushed back to external sources.
 3. **No automatic risk-script scanning** — `trust` is a manual annotation; we do not yet inspect skill content for dangerous shell calls.
 4. **No multi-version skill storage** — same-ID re-import is rejected; we do not yet maintain a per-skill version history under one logical identity.

@@ -1,10 +1,10 @@
 # SkillRelay Roadmap
 
-> **Last updated**: 2026-06-15
+> **Last updated**: 2026-06-16
 
-## Current Stage: v0.1.0 — Initial Release Complete
+## Current Stage: Phase 7 Complete — Multi-Source Discovery
 
-SkillRelay v0.1.0 ships with **17 CLI commands**, **2 agent adapters** (Hermes + Claude), **321 tests**, and **~76% of the long-term project vision** delivered. See [`acceptance.md`](./acceptance.md) for the full verification record.
+SkillRelay now ships with **17 CLI commands**, **2 agent adapters** (Hermes + Claude), **remote URL + GitHub import**, **357 tests**, and **~79% of the long-term project vision** delivered. See [`acceptance.md`](./acceptance.md) for the full verification record.
 
 ---
 
@@ -83,14 +83,18 @@ Goal: produce a comprehensive verification record mapping the project vision to 
 
 ---
 
-## Phase 7 — Multi-Source Discovery (Planned)
+## Phase 7 — Multi-Source Discovery ✅
 
 Goal: connect the registry to external skill sources.
 
-- [ ] GitHub repository source integration (import from raw URL or git clone)
-- [ ] Local directory source registration and watching
-- [ ] Source-level search federation (search across multiple registered sources)
-- [ ] SkillHub source integration (if SkillHub API is available)
+- [x] `skillrelay import https://…` — import from any raw HTTP/HTTPS URL
+- [x] `skillrelay import github:<owner>/<repo>/<path>[@ref]` — import from GitHub (resolves to raw.githubusercontent.com)
+- [x] `fetchText(url)` — Node 18+ built-in fetch helper with content-type + size guard
+- [x] `resolveGithubUri` — parses `github:` scheme, supports optional `@ref` for branch/tag/SHA
+- [x] `update` command re-fetches skills with `url` / `github` origin type
+- [ ] Local directory source registration and watching (deferred to Phase 7b)
+- [ ] Source-level search federation across multiple registered sources (deferred)
+- [ ] SkillHub source integration (deferred)
 
 ## Phase 8 — Publish & Ecosystem (Planned)
 
